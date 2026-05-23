@@ -1,55 +1,74 @@
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>CYBER_COMMANDER_PRO</title>
     <style>
         body { background: #000; color: #00FF41; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-        #overlay { padding: 40px; }
-        #terminal { height: 70vh; overflow-y: hidden; font-size: 1.2rem; border-right: 2px solid #00FF41; }
-        .controls { position: fixed; bottom: 20px; width: 100%; text-align: center; }
-        button { background: #000; color: #00FF41; border: 2px solid #00FF41; padding: 15px 30px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #00FF41; color: #000; }
-        .blink { animation: flash 0.5s infinite; }
-        @keyframes flash { 50% { opacity: 0; } }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        #overlay { position: relative; z-index: 2; padding: 30px; text-align: center; }
+        #logs { text-align: left; background: rgba(0,0,0,0.85); padding: 15px; height: 350px; overflow-y: hidden; border: 1px solid #0f0; margin-top: 20px; font-size: 16px; }
+        .red-flash { color: #ff0000; font-weight: bold; animation: blink 0.4s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        button { background: #00FF41; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; font-size: 18px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<div id="overlay">
-    <h1 class="blink">>> SECURE SERVER BREACH IN PROGRESS</h1>
-    <div id="terminal"></div>
-</div>
+    <canvas id="matrix"></canvas>
+    
+    <div id="overlay">
+        <h1>SYSTEM OVERRIDE INITIATED</h1>
+        <button onclick="startPrank()">INITIALIZE HACK SEQUENCE</button>
+        <div id="logs"></div>
+    </div>
 
-<div class="controls">
-    <button onclick="runBreach()">INITIALIZE BREACH</button>
-</div>
+    <script>
+        // Matrix Background
+        const c = document.getElementById("matrix");
+        const ctx = c.getContext("2d");
+        c.height = window.innerHeight; c.width = window.innerWidth;
+        const drops = Array(Math.floor(c.width/20)).fill(1);
+        setInterval(() => {
+            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
+            ctx.fillStyle = "#0f0";
+            drops.map((y, i) => {
+                ctx.fillText(String.fromCharCode(65+Math.random()*20), i*20, y*20);
+                drops[i] = y*20 > c.height ? 0 : y + 1;
+            });
+        }, 33);
 
-<script>
-    const term = document.getElementById('terminal');
-    const logs = [
-        "INITIALIZING ATTACK VECTOR...",
-        "BYPASSING DUAL-FACTOR AUTHENTICATION...",
-        "TARGET: FINANCIAL_SERVER_CORE_01",
-        "DECRYPTING ENCRYPTED_ACCOUNTS_DATABASE...",
-        "FACEBOOK_TOKEN: ACCESS_GRANTED",
-        "WHATSAPP_SESSION: SYNCING_MEDIA...",
-        "BANKING_CREDENTIALS: FOUND_MATCH_IN_VAULT",
-        "UPLOADING DATA TO EXTERNAL_PROXY...",
-        "SYSTEM_CONTROL: ADMINISTRATIVE_PRIVILEGES_OBTAINED",
-        "!!! WARNING: DATA EXFILTRATION COMPLETE !!!"
-    ];
+        // Hacking Logic
+        const logBox = document.getElementById('logs');
+        const tasks = [
+            "SCANNING NETWORK_PERIMETER...",
+            "DEVICE ID DETECTED: " + navigator.platform,
+            "ESTABLISHING SECURE PROXY...",
+            "BYPASSING FIREWALLS [..........] 40%",
+            "CRACKING WHATSAPP_SESSION_TOKENS...",
+            "ACCESSING SOCIAL_MEDIA_DATABASE...",
+            "DOWNLOADING BANK_FINANCIAL_LOGS...",
+            "<span class='red-flash'>!!! WARNING: PASSWORD BREACH DETECTED !!!</span>",
+            "PASSWORD FOUND: Admin@2026_Secure",
+            "UPLOADING DATA TO SERVER: 99%...",
+            "SUCCESS: FULL SYSTEM CONTROL ACQUIRED"
+        ];
 
-    function runBreach() {
-        let i = 0;
-        let interval = setInterval(() => {
-            if (i < logs.length) {
-                term.innerHTML += "> " + logs[i] + "<br>";
-                i++;
-            } else {
-                clearInterval(interval);
-                alert("PRANK COMPLETE: Data 'stolen' from target!");
-                location.reload();
-            }
-        }, 800);
-    }
-</script>
+        function startPrank() {
+            let i = 0;
+            let int = setInterval(() => {
+                if(i < tasks.length) {
+                    logBox.innerHTML += "> " + tasks[i] + "<br>";
+                    logBox.scrollTop = logBox.scrollHeight;
+                    i++;
+                } else {
+                    clearInterval(int);
+                    setTimeout(() => { 
+                        alert("PRANK HACKED! Relax sweetie, sab mazak tha!");
+                        window.location.href = "https://github.com"; 
+                    }, 2000);
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
