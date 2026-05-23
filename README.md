@@ -1,19 +1,31 @@
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My Hacker Profile</title>
     <style>
-        body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 50px; }
-        h1 { border-bottom: 2px solid #0f0; display: inline-block; }
-        .content { margin-top: 20px; }
+        body { background: #000; color: #00FF41; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
+        .terminal { padding: 20px; }
+        .glitch { animation: glitch 1s linear infinite; }
+        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .data-stream { color: #008F11; font-size: 12px; }
     </style>
 </head>
 <body>
-    <h1>> Welcome to my Terminal</h1>
-    <div class="content">
-        <p>> Hello World! I am learning to code and hack.</p>
-        <p>> Current Status: Building my skills on Termux.</p>
-        <p>> "The best way to predict the future is to create it."</p>
+    <div class="terminal">
+        <h1 class="glitch">> ROOT ACCESS GRANTED</h1>
+        <div id="system-info">
+            <p>> STATUS: SYSTEM OPERATIONAL</p>
+            <p>> NETWORK: ENCRYPTED</p>
+            <p>> TARGET: [UNDEFINED]</p>
+        </div>
+        <div class="data-stream" id="logs"></div>
     </div>
+
+    <script>
+        const logs = document.getElementById('logs');
+        setInterval(() => {
+            const entry = document.createElement('p');
+            entry.innerText = "> Running packet sniff: " + Math.random().toString(36).substring(7);
+            logs.appendChild(entry);
+        }, 1000);
+    </script>
 </body>
 </html>
