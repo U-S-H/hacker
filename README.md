@@ -1,34 +1,37 @@
-<html lang="en">
+<html>
 <head>
     <style>
-        body { background: #000; color: #ff0000; font-family: 'Courier New', monospace; padding: 20px; }
-        .alert { border: 2px solid #ff0000; padding: 20px; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
-        .data { color: #fff; font-size: 14px; margin-top: 20px; }
+        body { background: #000; color: #00FF41; font-family: 'Courier New', monospace; overflow: hidden; }
+        #canvas { display: block; }
+        .overlay { position: absolute; top: 20%; left: 10%; font-size: 24px; text-shadow: 0 0 10px #00FF41; }
     </style>
 </head>
 <body>
-    <div class="alert">
-        <h1>WARNING: SYSTEM COMPROMISED</h1>
-        <p>Your IP Address is being tracked...</p>
+    <canvas id="canvas"></canvas>
+    <div class="overlay">
+        <h1>ACCESSING REMOTE DEVICE...</h1>
+        <p id="status">ESTABLISHING CONNECTION</p>
     </div>
-    <div class="data" id="stream"></div>
 
     <script>
-        const stream = document.getElementById('stream');
-        const lines = [
-            "Accessing root directory...",
-            "Stealing local storage...",
-            "Decrypting user passwords...",
-            "Establishing connection to remote server...",
-            "Uploading files: [DCIM/Photos/Private]..."
-        ];
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const drops = Array(Math.floor(canvas.width/20)).fill(0);
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FF41';
+            drops.forEach((y, i) => {
+                const text = String.fromCharCode(Math.random() * 128);
+                ctx.fillText(text, i * 20, y * 20);
+                drops[i] = y * 20 > canvas.height ? 0 : y + 1;
+            });
+        }
+        setInterval(draw, 33);
         
-        let i = 0;
-        setInterval(() => {
-            stream.innerHTML += "<p>> " + lines[i % lines.length] + "</p>";
-            i++;
-        }, 800);
+        setTimeout(() => { document.getElementById('status').innerText = "SUCCESS: ROOT PRIVILEGES GRANTED!"; }, 3000);
     </script>
 </body>
 </html>
