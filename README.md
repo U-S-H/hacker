@@ -1,68 +1,73 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>PrimeX Elite Trading Demo</title>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-    <style>
-        body { background: #0b0e11; color: white; font-family: sans-serif; margin: 0; display: grid; grid-template-columns: 300px 1fr 300px; height: 100vh; }
-        .panel { border: 1px solid #333; padding: 20px; overflow-y: auto; }
-        .btn { width: 100%; padding: 15px; margin: 5px 0; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; }
-        .buy { background: #0ecb81; } .sell { background: #f6465d; }
-        input { width: 90%; padding: 10px; margin: 5px 0; background: #1e2329; border: 1px solid #444; color: white; }
-    </style>
-</head>
-<body>
+import React, { useState, useEffect } from 'react';
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, updateDoc, getDoc, addDoc, collection, serverTimestamp, increment } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
-<!-- 1. Market Panel -->
-<div class="panel">
-    <h3>Assets</h3>
-    <div id="marketList">Loading...</div>
-</div>
+// 1. Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyCsgXPW-h2NzAHMrDBIL_HjlU8wSpcgzvI",
+  authDomain: "course-3cc77.firebaseapp.com",
+  projectId: "course-3cc77",
+  storageBucket: "course-3cc77.firebasestorage.app",
+  messagingSenderId: "136140432667",
+  appId: "1:136140432667:web:9f543dc3db8683944ddfbe"
+};
 
-<!-- 2. Chart & History Panel -->
-<div class="panel">
-    <div id="chart" style="height: 400px;"></div>
-    <h3>Order History</h3>
-    <div id="historyList"></div>
-</div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-<!-- 3. Trading Panel -->
-<div class="panel">
-    <h3>Trade</h3>
-    <input type="number" id="amt" placeholder="Amount (USD)">
-    <input type="number" id="sl" placeholder="Stop Loss">
-    <input type="number" id="tp" placeholder="Take Profit">
-    <button class="btn buy" onclick="placeTrade('BUY')">BUY</button>
-    <button class="btn sell" onclick="placeTrade('SELL')">SELL</button>
-    <hr>
-    <h3>Portfolio</h3>
-    <p>Balance: <span id="bal">$10,000</span></p>
-    <p>P/L: <span id="pnl">$0</span></p>
-</div>
+function App() {
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [tapCount, setTapCount] = useState(0);
 
-<script>
-    let bal = 10000, pnl = 0;
-    const chart = LightweightCharts.createChart(document.getElementById('chart'), { width: 600, height: 400 });
-    const series = chart.addAreaSeries();
-    series.setData([{time: '2026-06-01', value: 30000}, {time: '2026-06-21', value: 35000}]);
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
+  }, []);
 
-    function placeTrade(type) {
-        let amt = parseFloat(document.getElementById('amt').value);
-        if(!amt) return alert("Enter amount!");
-        bal = type === 'BUY' ? bal - amt : bal + amt;
-        pnl += (type === 'BUY' ? -amt * 0.02 : amt * 0.02);
-        document.getElementById('bal').innerText = "$" + bal.toFixed(2);
-        document.getElementById('pnl').innerText = "$" + pnl.toFixed(2);
-        document.getElementById('historyList').innerHTML += `<div>${type} - $${amt}</div>`;
+  // Admin Tap Logic
+  const handleLogoTap = () => {
+    const count = tapCount + 1;
+    setTapCount(count);
+    if (count === 5) {
+      const key = prompt("Enter Secret Key:");
+      if (key === "5426224") setIsAdmin(true);
+      setTapCount(0);
     }
+  };
 
-    // Auto update markets
-    async function loadMarkets() {
-        const res = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum&order=market_cap_desc");
-        const data = await res.json();
-        document.getElementById('marketList').innerHTML = data.map(c => `<div>${c.symbol.toUpperCase()}: $${c.current_price}</div>`).join('');
+  // Trading Function
+  const executeTrade = async (type, amount) => {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      await updateDoc(userRef, { balance: increment(type === 'BUY' ? -amount : amount) });
+      await addDoc(collection(db, "orders"), { uid: user.uid, type, amount, timestamp: serverTimestamp() });
+      alert("Trade Successful!");
     }
-    loadMarkets();
-</script>
-</body>
-</html>
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1 onClick={handleLogoTap} style={{ cursor: 'pointer' }}>Trading Platform</h1>
+      
+      {!user ? (
+        <div>
+          <button onClick={() => signInWithPopup(auth, provider)}>Login with Google</button>
+        </div>
+      ) : (
+        <div>
+          <h2>Welcome, {user.email}</h2>
+          <button onClick={() => executeTrade('BUY', 100)}>BUY 100</button>
+          <button onClick={() => executeTrade('SELL', 100)}>SELL 100</button>
+        </div>
+      )}
+
+      {isAdmin && <div style={{marginTop: '20px', color: 'red'}}><h3>Admin Panel Active</h3></div>}
+    </div>
+  );
+}
+
+export default App;
