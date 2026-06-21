@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeZone - Unlimited Games</title>
+    <title>ArcadeZone - Unlimited Games Hub</title>
     <style>
         * {
             margin: 0;
@@ -13,10 +13,11 @@
         body {
             background: #0f0c1b;
             color: #fff;
+            overflow-x: hidden;
         }
         header {
             background: #1a153a;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
             border-bottom: 3px solid #6c5ce7;
         }
@@ -25,78 +26,91 @@
             font-size: 2.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin-bottom: 5px;
         }
-        /* Category Navigation */
+        header p {
+            color: #a29bfe;
+            font-size: 1rem;
+        }
+        /* Category Navigation Bar */
         .categories {
             display: flex;
             justify-content: center;
             gap: 15px;
             padding: 20px;
             background: #130f26;
+            flex-wrap: wrap;
         }
         .cat-btn {
-            padding: 10px 20px;
+            padding: 10px 25px;
             background: #251b4e;
             border: 2px solid #6c5ce7;
             color: #fff;
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.3s;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
         .cat-btn.active, .cat-btn:hover {
             background: #6c5ce7;
-            box-shadow: 0 0 10px #6c5ce7;
+            box-shadow: 0 0 15px #6c5ce7;
+            transform: scale(1.05);
         }
-        /* Main Grid Area */
+        /* Main Games Grid Area */
         .main-container {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 40px auto;
             padding: 0 20px;
         }
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
         }
         .game-card {
             background: #1a153a;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
             border: 1px solid #2d2460;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .game-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
             border-color: #6c5ce7;
         }
         .game-thumb {
             width: 100%;
-            height: 150px;
+            height: 160px;
             background-size: cover;
             background-position: center;
+            background-color: #251b4e;
+            position: relative;
         }
         .game-info {
-            padding: 15px;
+            padding: 20px;
         }
         .game-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #fff;
         }
         .game-tag {
             display: inline-block;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             background: #6c5ce7;
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
         }
-        /* Game Modal / Player View */
+        /* Fullscreen Game Modal Layer */
         .game-modal {
             display: none;
             position: fixed;
@@ -104,30 +118,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 7, 20, 0.95);
+            background: rgba(7, 5, 15, 0.98);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
         }
-        .modal-content {
-            position: relative;
-            width: 80%;
-            max-width: 900px;
-            height: 70vh;
-            background: #000;
-            border: 3px solid #6c5ce7;
-            border-radius: 8px;
-            overflow: hidden;
+        .modal-header {
+            width: 85%;
+            max-width: 950px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6c5ce7;
         }
         .close-btn {
-            margin-top: 20px;
-            padding: 12px 30px;
+            padding: 10px 25px;
             background: #ff7675;
             color: #fff;
             border: none;
@@ -135,6 +146,25 @@
             font-size: 1rem;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.2s;
+        }
+        .close-btn:hover {
+            background: #ee5253;
+        }
+        .modal-content {
+            width: 85%;
+            max-width: 950px;
+            height: 75vh;
+            background: #000;
+            border: 3px solid #6c5ce7;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(108, 92, 231, 0.5);
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
@@ -142,14 +172,13 @@
 
 <header>
     <h1>🕹️ ArcadeZone</h1>
-    <p>Explore Unlimited HTML5 Games</p>
+    <p>Unlimited Open-Source Web Games Portal</p>
 </header>
 
-<div class="categories">
-    <button class="cat-btn active" onclick="filterCategory('All')">All Games</button>
-    <button class="cat-btn" onclick="filterCategory('Action')">Action</button>
-    <button class="cat-btn" onclick="filterCategory('Racing')">Racing</button>
-    <button class="cat-btn" onclick="filterCategory('Puzzle')">Puzzle</button>
+<div class="categories" id="categoryTabs">
+    <button class="cat-btn active" onclick="filterCategory('All', event)">All Games</button>
+    <button class="cat-btn" onclick="filterCategory('Racing', event)">Racing</button>
+    <button class="cat-btn" onclick="filterCategory('Puzzle', event)">Puzzle</button>
 </div>
 
 <div class="main-container">
@@ -158,57 +187,57 @@
 </div>
 
 <div class="game-modal" id="gameModal">
-    <div class="modal-content">
-        <iframe id="gameFrame" src=""></iframe>
+    <div class="modal-header">
+        <div class="modal-title" id="currentGameTitle">Game Loading...</div>
+        <button class="close-btn" onclick="closeGame()">× Close Game</button>
     </div>
-    <button class="close-btn" onclick="closeGame()">Close Game</button>
+    <div class="modal-content">
+        <iframe id="gameFrame" src="" allowfullscreen></iframe>
+    </div>
 </div>
 
 <script>
-// Mock Database Array (Yahan aap real APIs ya database connect karenge)
-// Note: iFrames ke liye main ne open-source free distribution urls use kiye hain
+// Validated Iframe Friendly Target Source Array
 const gamesData = [
     {
         id: 1,
-        title: "Space Adventure",
-        category: "Action",
-        thumb: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=400",
-        embedUrl: "https://html5.gamedistribution.com/embed/f09804c8f3cf42b79a0b1df3395b00ee/"
+        title: "HexGL (3D Racing Game)",
+        category: "Racing",
+        thumb: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400",
+        embedUrl: "https://hexgl.bkcore.com/play/"
     },
     {
         id: 2,
-        title: "Cyber Racer x",
-        category: "Racing",
-        thumb: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400",
-        embedUrl: "https://html5.gamedistribution.com/embed/5bc5f19067b848eb8b51296068307db3/"
+        title: "2048 Puzzle Grid",
+        category: "Puzzle",
+        thumb: "https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400",
+        embedUrl: "https://gabrielecirulli.github.io/2048/"
     },
     {
         id: 3,
-        title: "Classic Block Puzzle",
+        title: "Hextris Speed Match",
         category: "Puzzle",
-        thumb: "https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400",
-        embedUrl: "https://html5.gamedistribution.com/embed/815777a83ee14ef19cb9f8ff3e86c05a/"
-    },
-    {
-        id: 4,
-        title: "Archery King",
-        category: "Action",
         thumb: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=400",
-        embedUrl: "https://html5.gamedistribution.com/embed/69a30b4ec2b8426ca2da4ffc18685e82/"
+        embedUrl: "https://hextris.io/"
     }
 ];
 
 const grid = document.getElementById('gamesGrid');
 const modal = document.getElementById('gameModal');
 const frame = document.getElementById('gameFrame');
+const modalTitle = document.getElementById('currentGameTitle');
 
-// Function to render games into grid
-function renderGames(games) {
+// Core Render Component
+function renderGames(list) {
     grid.innerHTML = "";
-    games.forEach(game => {
+    if(list.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#aaa;">No games found in this category.</p>`;
+        return;
+    }
+    list.forEach(game => {
         const card = document.createElement('div');
         card.className = 'game-card';
-        card.onclick = () => playGame(game.embedUrl);
+        card.onclick = () => playGame(game.title, game.embedUrl);
         card.innerHTML = `
             <div class="game-thumb" style="background-image: url('${game.thumb}')"></div>
             <div class="game-info">
@@ -220,9 +249,8 @@ function renderGames(games) {
     });
 }
 
-// Filter Logic
-function filterCategory(category) {
-    // Update active class on buttons
+// Category Array Filter Handler
+function filterCategory(category, event) {
     const buttons = document.querySelectorAll('.cat-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
@@ -235,19 +263,20 @@ function filterCategory(category) {
     }
 }
 
-// Play Game Frame Loader
-function playGame(url) {
+// Execution Loop Trigger for Frame
+function playGame(title, url) {
+    modalTitle.innerText = "Playing: " + title;
     frame.src = url;
     modal.style.display = 'flex';
 }
 
-// Close Game Logic
+// Memory Cleanup Logic
 function closeGame() {
-    frame.src = ""; // Clear memory/iframe
+    frame.src = ""; 
     modal.style.display = 'none';
 }
 
-// Initial Load
+// App Initialization
 renderGames(gamesData);
 </script>
 
