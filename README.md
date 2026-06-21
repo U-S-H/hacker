@@ -2,237 +2,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Space Shooter</title>
+    <title>Virtual Lucky Slots (Fun Only)</title>
     <style>
         body {
             margin: 0;
-            background: #000;
-            overflow: hidden;
+            background: #1a1a2e;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Courier New', Courier, monospace;
         }
-        canvas {
-            border: 4px solid #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-            background: #050510;
+        .container {
+            text-align: center;
+            background: #162447;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .slots {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .slot {
+            width: 80px;
+            height: 80px;
+            background: #e43f5a;
+            font-size: 40px;
+            line-height: 80px;
+            text-align: center;
+            border-radius: 10px;
+            border: 3px solid #fff;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            background: #1f4068;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #e43f5a;
+        }
+        .score-board {
+            font-size: 20px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div class="container">
+    <h2>Virtual Lucky Slots</h2>
+    <p style="color: #bbb;">Purely for Entertainment - No Real Money Involved</p>
+    
+    <div class="score-board">Virtual Credits: <span id="credits">100</span></div>
+    
+    <div class="slots">
+        <div class="slot" id="slot1">🍒</div>
+        <div class="slot" id="slot2">🍋</div>
+        <div class="slot" id="slot3">🍇</div>
+    </div>
+    
+    <button onclick="spin()">SPIN (Cost: 10 Credits)</button>
+    <p id="message" style="font-weight: bold; margin-top: 15px;"></p>
+</div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+    const items = ['🍒', '🍋', '🍇', '💎', '7️⃣'];
+    let credits = 100;
 
-// Game State
-let score = 0;
-let gameOver = false;
-const keys = {};
-
-// Player Setup
-const player = {
-    x: canvas.width / 2 - 20,
-    y: canvas.height - 60,
-    width: 40,
-    height: 40,
-    speed: 6,
-    color: "#00ffcc"
-};
-
-// Arrays for Game Objects
-const bullets = [];
-const enemies = [];
-const particles = [];
-
-// Event Listeners for Controls
-window.addEventListener("keydown", (e) => keys[e.key] = true);
-window.addEventListener("keyup", (e) => keys[e.key] = false);
-
-// Handle Shooting Rate
-let lastShot = 0;
-const fireRate = 200; // ms
-
-function spawnEnemy() {
-    if (gameOver) return;
-    const size = Math.random() * 30 + 20;
-    enemies.push({
-        x: Math.random() * (canvas.width - size),
-        y: -size,
-        width: size,
-        height: size,
-        speed: Math.random() * 2 + 2,
-        color: `hsl(${Math.random() * 360}, 80%, 60%)`
-    });
-    // Random interval for next spawn
-    setTimeout(spawnEnemy, Math.random() * 1000 + 600);
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 15; i++) {
-        particles.push({
-            x: x,
-            y: y,
-            vx: (Math.random() - 0.5) * 6,
-            vy: (Math.random() - 0.5) * 6,
-            alpha: 1,
-            color: color,
-            size: Math.random() * 3 + 1
-        });
-    }
-}
-
-// Main Game Loop
-function update() {
-    if (gameOver) return;
-
-    // Player Movement
-    if ((keys["ArrowLeft"] || keys["a"]) && player.x > 0) player.x -= player.speed;
-    if ((keys["ArrowRight"] || keys["d"]) && player.x < canvas.width - player.width) player.x += player.speed;
-
-    // Shooting
-    if (keys[" "] || keys["Enter"]) {
-        const now = Date.now();
-        if (now - lastShot > fireRate) {
-            bullets.push({
-                x: player.x + player.width / 2 - 3,
-                y: player.y,
-                width: 6,
-                height: 15,
-                speed: 8,
-                color: "#ff0055"
-            });
-            lastShot = now;
-        }
-    }
-
-    // Move Bullets
-    for (let i = bullets.length - 1; i >= 0; i--) {
-        bullets[i].y -= bullets[i].speed;
-        if (bullets[i].y < 0) bullets.splice(i, 1);
-    }
-
-    // Move Enemies
-    for (let i = enemies.length - 1; i >= 0; i--) {
-        enemies[i].y += enemies[i].speed;
-
-        // Check Collision with Player
-        if (
-            enemies[i].x < player.x + player.width &&
-            enemies[i].x + enemies[i].width > player.x &&
-            enemies[i].y < player.y + player.height &&
-            enemies[i].y + enemies[i].height > player.y
-        ) {
-            gameOver = true;
-            createExplosion(player.x + player.width/2, player.y + player.height/2, player.color);
+    function spin() {
+        if (credits < 10) {
+            document.getElementById('message').innerText = "Game Over! Refresh to restart with full credits.";
+            return;
         }
 
-        // Remove if off-screen
-        if (enemies[i].y > canvas.height) {
-            enemies.splice(i, 1);
+        // Deduct cost
+        credits -= 10;
+        document.getElementById('credits').innerText = credits;
+        document.getElementById('message').innerText = "Spinning...";
+
+        // Logic for Random Generation
+        const res1 = items[Math.floor(Math.random() * items.length)];
+        const res2 = items[Math.floor(Math.random() * items.length)];
+        const res3 = items[Math.floor(Math.random() * items.length)];
+
+        // Update UI
+        document.getElementById('slot1').innerText = res1;
+        document.getElementById('slot2').innerText = res2;
+        document.getElementById('slot3').innerText = res3;
+
+        // Check Win Status
+        if (res1 === res2 && res2 === res3) {
+            let winAmount = 50;
+            if (res1 === '💎' || res1 === '7️⃣') winAmount = 100; // Jackpot elements
+            credits += winAmount;
+            document.getElementById('message').innerText = `🎉 JACKPOT! You won ${winAmount} Virtual Credits!`;
+        } else if (res1 === res2 || res2 === res3 || res1 === res3) {
+            credits += 15;
+            document.getElementById('message').innerText = "Match 2! You got 15 Virtual Credits back.";
+        } else {
+            document.getElementById('message').innerText = "No luck this time. Try again!";
         }
+
+        document.getElementById('credits').innerText = credits;
     }
-
-    // Handle Particles
-    for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].x += particles[i].vx;
-        particles[i].y += particles[i].vy;
-        particles[i].alpha -= 0.02;
-        if (particles[i].alpha <= 0) particles.splice(i, 1);
-    }
-
-    // Bullet & Enemy Collision Detection
-    for (let b = bullets.length - 1; b >= 0; b--) {
-        for (let e = enemies.length - 1; e >= 0; e--) {
-            if (
-                bullets[b] &&
-                bullets[b].x < enemies[e].x + enemies[e].width &&
-                bullets[b].x + bullets[b].width > enemies[e].x &&
-                bullets[b].y < enemies[e].y + enemies[e].height &&
-                bullets[b].y + bullets[b].height > enemies[e].y
-            ) {
-                createExplosion(enemies[e].x + enemies[e].width/2, enemies[e].y + enemies[e].height/2, enemies[e].color);
-                enemies.splice(e, 1);
-                bullets.splice(b, 1);
-                score += 10;
-                break;
-            }
-        }
-    }
-}
-
-function draw() {
-    // Clear Canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (!gameOver) {
-        // Draw Player (Spaceship Triangle)
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        ctx.moveTo(player.x + player.width / 2, player.y);
-        ctx.lineTo(player.x, player.y + player.height);
-        ctx.lineTo(player.x + player.width, player.y + player.height);
-        ctx.closePath();
-        ctx.fill();
-    }
-
-    // Draw Bullets
-    bullets.forEach(b => {
-        ctx.fillStyle = b.color;
-        ctx.fillRect(b.x, b.y, b.width, b.height);
-    });
-
-    // Draw Enemies
-    enemies.forEach(e => {
-        ctx.fillStyle = e.color;
-        ctx.fillRect(e.x, e.y, e.width, e.height);
-    });
-
-    // Draw Particles
-    particles.forEach(p => {
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, p.size, p.size);
-        ctx.restore();
-    });
-
-    // Draw Score
-    ctx.fillStyle = "#fff";
-    ctx.font = "20px 'Courier New'";
-    ctx.fillText(`SCORE: ${score}`, 20, 40);
-
-    // Game Over Screen
-    if (gameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = "#ff0055";
-        ctx.font = "40px 'Courier New'";
-        ctx.textAlign = "center";
-        ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 20);
-        
-        ctx.fillStyle = "#fff";
-        ctx.font = "20px 'Courier New'";
-        ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
-        ctx.fillText("Refresh Page to Restart", canvas.width / 2, canvas.height / 2 + 60);
-    }
-}
-
-// Loop Engine
-function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
-
-// Start Game
-spawnEnemy();
-loop();
 </script>
 
 </body>
