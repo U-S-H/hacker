@@ -1,26 +1,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Prime Solutions Demo Trading</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeX Demo Trading</title>
 
-<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
+font-family:'Poppins',sans-serif;
 }
 
 :root{
---bg:#0b0e11;
---card:#1e2329;
+--bg:#0b0f19;
+--card:#141b2d;
+--card2:#1b2338;
 --accent:#f0b90b;
---text:#eaecef;
 --green:#0ecb81;
 --red:#f6465d;
+--text:#ffffff;
+--muted:#a9b1c7;
 }
 
 body{
@@ -33,101 +36,160 @@ padding-bottom:80px;
 display:none;
 }
 
-.navbar{
+.login-screen{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.login-card{
+width:100%;
+max-width:400px;
 background:var(--card);
+padding:25px;
+border-radius:20px;
+}
+
+.logo{
+font-size:32px;
+font-weight:700;
+color:var(--accent);
+text-align:center;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+color:var(--muted);
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-bottom:12px;
+background:var(--card2);
+border:none;
+border-radius:12px;
+color:white;
+}
+
+.btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:var(--accent);
+font-weight:700;
+cursor:pointer;
+}
+
+.navbar{
 padding:15px;
+background:var(--card);
 display:flex;
 justify-content:space-between;
 align-items:center;
-border-bottom:1px solid #333;
 position:sticky;
 top:0;
 z-index:100;
 }
 
-.logo{
-font-size:20px;
-font-weight:bold;
-color:var(--accent);
+.balance{
+font-weight:700;
+font-size:18px;
 }
 
-.balance-box{
-font-weight:bold;
-}
-
-.screen{
+.page{
 padding:15px;
 }
 
-.card{
-background:var(--card);
-padding:15px;
-border-radius:15px;
+.hero{
+background:linear-gradient(135deg,#f0b90b,#ffda63);
+color:black;
+padding:20px;
+border-radius:20px;
 margin-bottom:15px;
 }
 
-input,select{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:#2b3139;
-color:white;
-}
-
-button{
-border:none;
-cursor:pointer;
-}
-
-.btn{
-width:100%;
-padding:12px;
-margin-top:12px;
-border-radius:10px;
-font-weight:bold;
-background:var(--accent);
-color:black;
-}
-
-.btn-buy{
-background:var(--green);
-color:white;
-}
-
-.btn-sell{
-background:var(--red);
-color:white;
+.hero h2{
+font-size:28px;
 }
 
 .stats{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:10px;
+gap:12px;
+margin-bottom:15px;
 }
 
 .stat{
-background:#2b3139;
-padding:15px;
-border-radius:10px;
+background:var(--card);
+padding:20px;
+border-radius:18px;
 text-align:center;
 }
 
-#chart{
-width:100%;
-height:300px;
-margin-top:10px;
+.stat h2{
+margin-bottom:8px;
 }
 
-.coin-card{
+.card{
 background:var(--card);
 padding:15px;
-border-radius:12px;
-margin-bottom:10px;
+border-radius:18px;
+margin-bottom:15px;
+}
+
+.card-title{
+margin-bottom:12px;
+font-size:18px;
+font-weight:600;
+}
+
+.search{
+margin-bottom:15px;
+}
+
+.search input{
+margin:0;
+}
+
+.coin{
 display:flex;
 justify-content:space-between;
 align-items:center;
+padding:14px;
+background:var(--card2);
+border-radius:14px;
+margin-bottom:10px;
+}
+
+.coin-left{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.coin-icon{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#2a3553;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+}
+
+.green{
+color:var(--green);
+}
+
+.red{
+color:var(--red);
 }
 
 .bottom-nav{
@@ -140,124 +202,130 @@ background:var(--card);
 display:flex;
 justify-content:space-around;
 align-items:center;
-border-top:1px solid #333;
 }
 
-.nav-btn{
+.nav-item{
 cursor:pointer;
 font-size:14px;
 }
 
-.history-item{
-padding:10px;
-background:#2b3139;
-border-radius:10px;
-margin-bottom:8px;
-}
-
-.login-box{
-max-width:400px;
-margin:auto;
-padding-top:100px;
-}
-
-h2{
-margin-bottom:10px;
-}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<div id="loginScreen" class="login-screen">
 
-<div id="loginScreen" class="screen">
+<div class="login-card">
 
-<div class="login-box card">
+<div class="logo">PrimeX</div>
 
-<h2>Prime Solutions</h2>
+<div class="subtitle">
+Demo Crypto Trading Platform
+</div>
 
 <input type="text" id="username" placeholder="Username">
 
 <input type="password" id="password" placeholder="Password">
 
-<button class="btn" onclick="login()">Login / Register</button>
+<button class="btn" onclick="loginUser()">
+ENTER PLATFORM
+</button>
 
 </div>
 
 </div>
-
-<!-- APP -->
 
 <div id="app" class="hidden">
 
 <div class="navbar">
-<div class="logo">PRIME SOLUTIONS</div>
-<div class="balance-box">
+
+<h2>PrimeX</h2>
+
+<div class="balance">
 $<span id="balance">10000</span>
 </div>
+
 </div>
 
-<div id="homePage" class="screen">
+<div id="homePage" class="page">
+
+<div class="hero">
+
+<h2>Demo Account</h2>
+
+<p>
+Trade crypto with virtual funds.
+</p>
+
+</div>
 
 <div class="stats">
 
 <div class="stat">
-<h3>$<span id="portfolioValue">10000</span></h3>
-<small>Portfolio</small>
+<h2 id="portfolioValue">$10000</h2>
+<p>Portfolio</p>
 </div>
 
 <div class="stat">
-<h3 id="profitLoss">$0</h3>
-<small>P/L</small>
+<h2 id="profitLoss" class="green">
++$0
+</h2>
+<p>P/L</p>
 </div>
 
 </div>
 
 <div class="card">
-<h3>Live Chart</h3>
-<div id="chart"></div>
+
+<div class="card-title">
+🔥 Top Gainers
+</div>
+
+<div id="topGainers">
+Loading...
+</div>
+
 </div>
 
 <div class="card">
-<h3>Quick Trade</h3>
 
-<select id="tradeCoin">
-<option value="bitcoin">BTC</option>
-<option value="ethereum">ETH</option>
-<option value="solana">SOL</option>
-<option value="binancecoin">BNB</option>
-<option value="ripple">XRP</option>
-</select>
+<div class="card-title">
+📊 Market Overview
+</div>
 
-<input type="number" id="tradeAmount" placeholder="Amount USD">
-
-<button class="btn-buy btn" onclick="buyCoin()">BUY</button>
-
-<button class="btn-sell btn" onclick="sellCoin()">SELL</button>
+<div id="marketPreview">
+Loading...
+</div>
 
 </div>
 
 </div>
 
-<div id="marketPage" class="screen hidden">
+<div id="marketsPage" class="page hidden">
 
-<h2>Markets</h2>
+<div class="search">
+<input type="text" placeholder="Search Coin">
+</div>
 
 <div id="marketList"></div>
 
 </div>
 
-<div id="portfolioPage" class="screen hidden">
+<div id="portfolioPage" class="page hidden">
 
-<h2>Portfolio</h2>
+<div class="card-title">
+💼 Portfolio
+</div>
 
 <div id="portfolioList"></div>
 
 </div>
 
-<div id="historyPage" class="screen hidden">
+<div id="historyPage" class="page hidden">
 
-<h2>Trade History</h2>
+<div class="card-title">
+📜 Trade History
+</div>
 
 <div id="historyList"></div>
 
@@ -265,19 +333,19 @@ $<span id="balance">10000</span>
 
 <div class="bottom-nav">
 
-<div class="nav-btn" onclick="showPage('homePage')">
+<div class="nav-item" onclick="showPage('homePage')">
 🏠 Home
 </div>
 
-<div class="nav-btn" onclick="showPage('marketPage')">
+<div class="nav-item" onclick="showPage('marketsPage')">
 📈 Markets
 </div>
 
-<div class="nav-btn" onclick="showPage('portfolioPage')">
+<div class="nav-item" onclick="showPage('portfolioPage')">
 💼 Portfolio
 </div>
 
-<div class="nav-btn" onclick="showPage('historyPage')">
+<div class="nav-item" onclick="showPage('historyPage')">
 📜 History
 </div>
 
@@ -287,42 +355,19 @@ $<span id="balance">10000</span>
 
 <script>
 
-let user =
-JSON.parse(localStorage.getItem("demoUser"));
-
 let balance = 10000;
 let portfolio = {};
 let history = [];
 
-function login(){
+function loginUser(){
 
-const username =
+const user =
 document.getElementById("username").value;
 
-if(!username){
-alert("Enter username");
+if(!user){
+alert("Enter Username");
 return;
 }
-
-if(!user){
-
-user = {
-username,
-balance:10000,
-portfolio:{},
-history:[]
-};
-
-localStorage.setItem(
-"demoUser",
-JSON.stringify(user)
-);
-
-}
-
-balance=user.balance;
-portfolio=user.portfolio;
-history=user.history;
 
 document.getElementById("loginScreen")
 .classList.add("hidden");
@@ -330,53 +375,20 @@ document.getElementById("loginScreen")
 document.getElementById("app")
 .classList.remove("hidden");
 
-document.getElementById("balance")
-.innerText=balance.toFixed(2);
-
-loadHistory();
-loadPortfolio();
-createChart();
-loadMarkets();
-
-}
-
-if(user){
-login();
-}
-const coinMap = {
-bitcoin:"BTC",
-ethereum:"ETH",
-solana:"SOL",
-binancecoin:"BNB",
-ripple:"XRP"
-};
-
-let marketData = {};
-
-function saveUser(){
-
-user.balance = balance;
-user.portfolio = portfolio;
-user.history = history;
-
-localStorage.setItem(
-"demoUser",
-JSON.stringify(user)
-);
-
 }
 
 function showPage(id){
 
-document
-.querySelectorAll(".screen")
-.forEach(el=>{
+[
+"homePage",
+"marketsPage",
+"portfolioPage",
+"historyPage"
+].forEach(page=>{
 
-if(
-el.id!=="loginScreen"
-){
-el.classList.add("hidden");
-}
+document
+.getElementById(page)
+.classList.add("hidden");
 
 });
 
@@ -386,57 +398,81 @@ document
 
 }
 
+</script>const API =
+"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,ripple&order=market_cap_desc";
+
+let marketData = [];
+
 async function loadMarkets(){
 
 try{
 
-const res = await fetch(
-"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,ripple"
-);
-
+const res = await fetch(API);
 const data = await res.json();
 
-marketData = {};
+marketData = data;
 
-data.forEach(c=>{
-marketData[c.id]=c;
-});
+renderMarkets();
+renderTopGainers();
 
-const marketList =
-document.getElementById("marketList");
+}catch(err){
 
-marketList.innerHTML="";
+console.log(err);
 
-data.forEach(c=>{
+}
 
-marketList.innerHTML += `
+}
 
-<div class="coin-card">
+function renderTopGainers(){
+
+const box =
+document.getElementById(
+"topGainers"
+);
+
+const sorted =
+[...marketData]
+.sort(
+(a,b)=>
+b.price_change_percentage_24h -
+a.price_change_percentage_24h
+);
+
+box.innerHTML="";
+
+sorted.slice(0,3)
+.forEach(c=>{
+
+box.innerHTML += `
+
+<div class="coin">
+
+<div class="coin-left">
+
+<div class="coin-icon">
+🚀
+</div>
 
 <div>
 
-<b>${c.symbol.toUpperCase()}</b>
+<b>
+${c.symbol.toUpperCase()}
+</b>
 
 <br>
 
 <small>
-$${c.current_price.toLocaleString()}
+$${c.current_price}
 </small>
 
 </div>
 
-<div style="
-color:${
-c.price_change_percentage_24h>=0
-?
-'#0ecb81'
-:
-'#f6465d'
-};
-font-weight:bold;
-">
+</div>
 
-${c.price_change_percentage_24h.toFixed(2)}%
+<div class="green">
+
++${c.price_change_percentage_24h
+.toFixed(2)}%
 
 </div>
 
@@ -446,171 +482,112 @@ ${c.price_change_percentage_24h.toFixed(2)}%
 
 });
 
-updatePortfolioValue();
-
-}
-catch(err){
-
-console.log(err);
-
 }
 
-}
+function renderMarkets(){
 
-function buyCoin(){
-
-const coin =
-document.getElementById("tradeCoin").value;
-
-const amount =
-parseFloat(
-document.getElementById("tradeAmount").value
+const list =
+document.getElementById(
+"marketList"
 );
 
-if(
-!amount ||
-amount<=0
-){
-alert("Enter amount");
-return;
-}
+const preview =
+document.getElementById(
+"marketPreview"
+);
 
-if(
-amount>balance
-){
-alert("Insufficient balance");
-return;
-}
+list.innerHTML="";
+preview.innerHTML="";
 
-const price =
-marketData[coin]?.current_price;
+marketData.forEach(c=>{
 
-if(!price){
-alert("Market loading...");
-return;
-}
+const card = `
 
-const qty =
-amount/price;
+<div class="coin">
 
-if(!portfolio[coin]){
+<div class="coin-left">
 
-portfolio[coin]={
-qty:0,
-avg:price
-};
+<div class="coin-icon">
+💰
+</div>
 
-}
+<div>
 
-portfolio[coin].qty += qty;
+<b>
+${c.name}
+</b>
 
-portfolio[coin].avg = price;
+<br>
 
-balance -= amount;
+<small>
+${c.symbol.toUpperCase()}
+</small>
 
-history.unshift({
+</div>
 
-type:"BUY",
-coin,
-amount,
-qty,
-price,
-date:new Date()
-.toLocaleString()
+</div>
+
+<div>
+
+<div>
+$${c.current_price}
+</div>
+
+<div class="${
+c.price_change_percentage_24h >=0
+?
+'green'
+:
+'red'
+}">
+${c.price_change_percentage_24h
+.toFixed(2)}%
+</div>
+
+</div>
+
+</div>
+
+`;
+
+list.innerHTML += card;
 
 });
 
-saveUser();
+marketData
+.slice(0,3)
+.forEach(c=>{
 
-refreshUI();
+preview.innerHTML += `
 
-alert(
-`${coinMap[coin]} Purchased`
-);
+<div class="coin">
 
-}
+<div>
+${c.symbol.toUpperCase()}
+</div>
 
-function sellCoin(){
+<div>
+$${c.current_price}
+</div>
 
-const coin =
-document.getElementById("tradeCoin").value;
+</div>
 
-const amount =
-parseFloat(
-document.getElementById("tradeAmount").value
-);
-
-if(
-!portfolio[coin]
-){
-alert("No Holdings");
-return;
-}
-
-const price =
-marketData[coin]?.current_price;
-
-const qty =
-amount/price;
-
-if(
-qty >
-portfolio[coin].qty
-){
-alert("Not enough coins");
-return;
-}
-
-portfolio[coin].qty -= qty;
-
-if(
-portfolio[coin].qty<=0
-){
-delete portfolio[coin];
-}
-
-balance += amount;
-
-history.unshift({
-
-type:"SELL",
-coin,
-amount,
-qty,
-price,
-date:new Date()
-.toLocaleString()
+`;
 
 });
 
-saveUser();
-
-refreshUI();
-
-alert(
-`${coinMap[coin]} Sold`
-);
-
 }
 
-function refreshUI(){
+function updateBalance(){
 
 document
 .getElementById("balance")
 .innerText =
 balance.toFixed(2);
 
-loadPortfolio();
-
-loadHistory();
-
-updatePortfolioValue();
-
-saveUser();
-
 }
 
-function loadPortfolio(){
+function updatePortfolio(){
 
 const box =
 document.getElementById(
@@ -619,46 +596,35 @@ document.getElementById(
 
 box.innerHTML="";
 
-if(
-Object.keys(portfolio)
-.length===0
-){
+let totalValue = balance;
 
-box.innerHTML=
-"<div class='card'>No Holdings</div>";
+for(const coin in portfolio){
 
-return;
+const market =
+marketData.find(
+c=>c.id===coin
+);
 
-}
-
-for(
-const coin in portfolio
-){
-
-const p =
-portfolio[coin];
-
-const current =
-marketData[coin]
-?
-marketData[coin].current_price
-:
-0;
+if(!market) continue;
 
 const value =
-p.qty*current;
+portfolio[coin].qty *
+market.current_price;
+
+totalValue += value;
 
 box.innerHTML += `
 
 <div class="card">
 
 <h3>
-${coinMap[coin]}
+${market.symbol.toUpperCase()}
 </h3>
 
 <p>
-Quantity:
-${p.qty.toFixed(6)}
+Qty:
+${portfolio[coin].qty
+.toFixed(5)}
 </p>
 
 <p>
@@ -672,9 +638,59 @@ $${value.toFixed(2)}
 
 }
 
+document
+.getElementById(
+"portfolioValue"
+)
+.innerText =
+"$" +
+totalValue.toFixed(2);
+
+const pnl =
+totalValue - 10000;
+
+const pnlBox =
+document.getElementById(
+"profitLoss"
+);
+
+pnlBox.innerText =
+(pnl>=0?"+":"")
++
+"$"
++
+pnl.toFixed(2);
+
+pnlBox.className =
+pnl>=0
+?
+"green"
+:
+"red";
+
 }
 
-function loadHistory(){
+function saveTrade(
+type,
+coin,
+amount
+){
+
+history.unshift({
+
+type,
+coin,
+amount,
+date:new Date()
+.toLocaleString()
+
+});
+
+renderHistory();
+
+}
+
+function renderHistory(){
 
 const box =
 document.getElementById(
@@ -683,12 +699,10 @@ document.getElementById(
 
 box.innerHTML="";
 
-if(
-history.length===0
-){
+if(history.length===0){
 
 box.innerHTML=
-"<div class='card'>No History</div>";
+"<div class='card'>No Trades Yet</div>";
 
 return;
 
@@ -698,18 +712,19 @@ history.forEach(h=>{
 
 box.innerHTML += `
 
-<div class="history-item">
+<div class="card">
 
 <b>
 ${h.type}
 </b>
 
--
-${coinMap[h.coin]}
+<br>
+
+${h.coin}
 
 <br>
 
-$${h.amount.toFixed(2)}
+$${h.amount}
 
 <br>
 
@@ -723,112 +738,259 @@ ${h.date}
 
 });
 
-    }function updatePortfolioValue(){
+}
 
-let total = balance;
+loadMarkets();
 
-for(const coin in portfolio){
+setInterval(
+loadMarkets,
+15000
+);function buyCoin(coinId){
 
-if(!marketData[coin]) continue;
+const amount =
+parseFloat(
+prompt("Enter USD Amount")
+);
 
-total +=
-portfolio[coin].qty *
-marketData[coin].current_price;
+if(
+!amount ||
+amount<=0
+){
+return;
+}
+
+if(
+amount > balance
+){
+alert("Insufficient Balance");
+return;
+}
+
+const coin =
+marketData.find(
+c=>c.id===coinId
+);
+
+if(!coin){
+return;
+}
+
+const qty =
+amount /
+coin.current_price;
+
+if(!portfolio[coinId]){
+
+portfolio[coinId]={
+qty:0
+};
 
 }
 
-document
-.getElementById("portfolioValue")
-.innerText =
-total.toFixed(2);
+portfolio[coinId].qty += qty;
 
-const pnl =
-total - 10000;
+balance -= amount;
 
-const pnlBox =
-document.getElementById("profitLoss");
+saveTrade(
+"BUY",
+coin.symbol.toUpperCase(),
+amount
+);
 
-pnlBox.innerText =
-(pnl >= 0 ? "+" : "") +
-"$" +
-pnl.toFixed(2);
+updateBalance();
+updatePortfolio();
+saveData();
 
-pnlBox.style.color =
-pnl >= 0
+alert(
+"Trade Executed Successfully"
+);
+
+}
+
+function sellCoin(coinId){
+
+if(
+!portfolio[coinId]
+){
+alert("No Holdings");
+return;
+}
+
+const amount =
+parseFloat(
+prompt("Enter USD Amount")
+);
+
+if(
+!amount ||
+amount<=0
+){
+return;
+}
+
+const coin =
+marketData.find(
+c=>c.id===coinId
+);
+
+if(!coin){
+return;
+}
+
+const qty =
+amount /
+coin.current_price;
+
+if(
+qty >
+portfolio[coinId].qty
+){
+alert("Not Enough Holdings");
+return;
+}
+
+portfolio[coinId].qty -= qty;
+
+if(
+portfolio[coinId].qty <= 0
+){
+delete portfolio[coinId];
+}
+
+balance += amount;
+
+saveTrade(
+"SELL",
+coin.symbol.toUpperCase(),
+amount
+);
+
+updateBalance();
+updatePortfolio();
+saveData();
+
+alert(
+"Sell Order Completed"
+);
+
+}
+
+function renderMarkets(){
+
+const list =
+document.getElementById(
+"marketList"
+);
+
+const preview =
+document.getElementById(
+"marketPreview"
+);
+
+list.innerHTML="";
+preview.innerHTML="";
+
+marketData.forEach(c=>{
+
+list.innerHTML += `
+
+<div class="coin">
+
+<div class="coin-left">
+
+<div class="coin-icon">
+💰
+</div>
+
+<div>
+
+<b>
+${c.name}
+</b>
+
+<br>
+
+<small>
+${c.symbol.toUpperCase()}
+</small>
+
+</div>
+
+</div>
+
+<div>
+
+<div>
+$${c.current_price}
+</div>
+
+<div class="${
+c.price_change_percentage_24h>=0
 ?
-"#0ecb81"
+'green'
 :
-"#f6465d";
+'red'
+}">
+${c.price_change_percentage_24h.toFixed(2)}%
+</div>
 
-}
+<button
+onclick="buyCoin('${c.id}')"
+style="
+margin-top:6px;
+padding:6px 10px;
+border:none;
+border-radius:8px;
+background:#0ecb81;
+color:white;
+cursor:pointer;
+">
+Buy
+</button>
 
-function createChart(){
+<button
+onclick="sellCoin('${c.id}')"
+style="
+margin-top:6px;
+padding:6px 10px;
+border:none;
+border-radius:8px;
+background:#f6465d;
+color:white;
+cursor:pointer;
+">
+Sell
+</button>
 
-const chart =
-LightweightCharts
-.createChart(
-document.getElementById("chart"),
-{
-width:window.innerWidth-30,
-height:300,
-layout:{
-background:{
-color:"#0b0e11"
-},
-textColor:"#eaecef"
-},
-grid:{
-vertLines:{
-color:"#1e2329"
-},
-horzLines:{
-color:"#1e2329"
-}
-}
-}
-);
+</div>
 
-const series =
-chart.addAreaSeries({
-lineColor:"#f0b90b",
-topColor:"rgba(240,185,11,0.4)",
-bottomColor:"rgba(240,185,11,0.05)"
-});
+</div>
 
-const data = [];
-
-let value = 50000;
-
-for(let i=1;i<=100;i++){
-
-value +=
-(Math.random()-0.5)
-*1500;
-
-data.push({
-
-time:i,
-value:value
+`;
 
 });
 
-}
+marketData
+.slice(0,3)
+.forEach(c=>{
 
-series.setData(data);
+preview.innerHTML += `
 
-window.addEventListener(
-"resize",
-()=>{
+<div class="coin">
 
-chart.applyOptions({
+<div>
+${c.symbol.toUpperCase()}
+</div>
 
-width:
-window.innerWidth-30
+<div>
+$${c.current_price}
+</div>
+
+</div>
+
+`;
 
 });
-
-}
-);
 
 }
 
@@ -836,23 +998,70 @@ function demoDeposit(){
 
 balance += 1000;
 
-history.unshift({
+saveTrade(
+"DEPOSIT",
+"USD",
+1000
+);
 
-type:"DEPOSIT",
-coin:"bitcoin",
-amount:1000,
-qty:0,
-price:0,
-date:new Date()
-.toLocaleString()
-
-});
-
-refreshUI();
+updateBalance();
+updatePortfolio();
+saveData();
 
 alert(
-"$1000 Demo Added"
+"$1000 Added"
 );
+
+}
+
+function saveData(){
+
+localStorage.setItem(
+"primex_balance",
+balance
+);
+
+localStorage.setItem(
+"primex_portfolio",
+JSON.stringify(
+portfolio
+)
+);
+
+localStorage.setItem(
+"primex_history",
+JSON.stringify(
+history
+)
+);
+
+}
+
+function loadData(){
+
+balance =
+parseFloat(
+localStorage.getItem(
+"primex_balance"
+)
+) || 10000;
+
+portfolio =
+JSON.parse(
+localStorage.getItem(
+"primex_portfolio"
+)
+) || {};
+
+history =
+JSON.parse(
+localStorage.getItem(
+"primex_history"
+)
+) || [];
+
+updateBalance();
+renderHistory();
 
 }
 
@@ -860,13 +1069,11 @@ function resetAccount(){
 
 if(
 confirm(
-"Reset Demo Account?"
+"Reset Account?"
 )
 ){
 
-localStorage.removeItem(
-"demoUser"
-);
+localStorage.clear();
 
 location.reload();
 
@@ -874,11 +1081,9 @@ location.reload();
 
 }
 
-setInterval(()=>{
+window.onload=()=>{
 
-loadMarkets();
-
-},15000);
+loadData();
 
 setTimeout(()=>{
 
@@ -887,31 +1092,123 @@ document.getElementById(
 "homePage"
 );
 
-if(home){
-
 home.innerHTML += `
 
 <div class="card">
 
-<h3>
-Demo Controls
-</h3>
+<div class="card-title">
+⚙ Demo Controls
+</div>
 
 <button
 class="btn"
 onclick="demoDeposit()">
-
-Add Demo $1000
-
+Add $1000
 </button>
+
+<br><br>
 
 <button
-class="btn-sell btn"
+class="btn"
+style="
+background:#f6465d;
+color:white;
+"
 onclick="resetAccount()">
-
 Reset Account
-
 </button>
+
+</div>
+
+`;
+
+},500);
+
+};const searchInput =
+document.querySelector(
+'.search input'
+);
+
+if(searchInput){
+
+searchInput.addEventListener(
+'input',
+function(){
+
+const value =
+this.value
+.toLowerCase();
+
+const coins =
+document.querySelectorAll(
+'#marketList .coin'
+);
+
+coins.forEach(card=>{
+
+const text =
+card.innerText
+.toLowerCase();
+
+card.style.display =
+text.includes(value)
+?
+'flex'
+:
+'none';
+
+});
+
+}
+);
+
+}
+
+function renderTradingStats(){
+
+const home =
+document.getElementById(
+'homePage'
+);
+
+const buys =
+history.filter(
+x=>x.type==="BUY"
+).length;
+
+const sells =
+history.filter(
+x=>x.type==="SELL"
+).length;
+
+const deposits =
+history.filter(
+x=>x.type==="DEPOSIT"
+).length;
+
+home.innerHTML += `
+
+<div class="stats">
+
+<div class="stat">
+<h2>${buys}</h2>
+<p>Buy Orders</p>
+</div>
+
+<div class="stat">
+<h2>${sells}</h2>
+<p>Sell Orders</p>
+</div>
+
+<div class="stat">
+<h2>${deposits}</h2>
+<p>Deposits</p>
+</div>
+
+<div class="stat">
+<h2>${history.length}</h2>
+<p>Total Activity</p>
+</div>
 
 </div>
 
@@ -919,7 +1216,15 @@ Reset Account
 
 }
 
+setTimeout(()=>{
+
+renderTradingStats();
+
 },1000);
+
+updateBalance();
+updatePortfolio();
+renderHistory();
 
 </script>
 
