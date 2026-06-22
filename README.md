@@ -2,880 +2,649 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading1 - Institutional Multi-Asset & Settlement Terminal</title>
+    <title>OlympTrade Replicated Pro Platform Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #111827; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1b2537; border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #11141a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #222933; border-radius: 4px; }
+        body { background-color: #11141a; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .neon-green-btn { background-color: #00e676; color: #000000; font-weight: 700; }
+        .neon-green-btn:hover { background-color: #00c853; }
+        .trading-down-btn { background-color: #f14343; }
+        .trading-down-btn:hover { background-color: #d32f2f; }
+        .trading-up-btn { background-color: #26a69a; }
+        .trading-up-btn:hover { background-color: #00897b; }
+        .app-bg-dark { background-color: #1c222c; }
+        .app-bg-card { background-color: #161b22; }
     </style>
 </head>
-<body class="bg-[#0b0f19] text-gray-100 font-sans antialiased custom-scrollbar">
+<body class="custom-scrollbar min-h-screen flex flex-col justify-between select-none pb-20 md:pb-0">
 
-    <!-- Auth Gateway Screen -->
-    <div id="authScreen" class="fixed inset-0 bg-[#0b0f19] z-50 flex items-center justify-center p-4">
-        <div class="bg-[#111827] border border-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md">
-            <div class="flex items-center space-x-2 justify-center mb-6">
-                <div class="w-8 h-8 bg-[#10b981] rounded-lg flex items-center justify-center font-bold text-[#0b0f19]">T1</div>
-                <span class="text-2xl font-bold tracking-wider text-white">Trading<span class="text-[#10b981]">1</span></span>
+    <!-- TOP HEADER NAVIGATION BAR (Replicating Screenshot _28-39) -->
+    <nav class="bg-[#161b22] border-b border-gray-800/60 px-4 h-14 flex items-center justify-between sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <div id="profileDropdownBtn" class="w-8 h-8 rounded-full bg-gray-700/60 flex items-center justify-center border border-gray-600/40 cursor-pointer">
+                <i class="fa-solid fa-user text-sm text-gray-300"></i>
             </div>
-            <h2 id="authTitle" class="text-xl font-semibold text-center text-white mb-6">Access Trading Floor</h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Email Address</label>
-                    <input type="email" id="authEmail" placeholder="trader@trading1.com" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#10b981]">
+            <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        </div>
+
+        <!-- Center Accounts Switch Context Trigger -->
+        <div onclick="openAccountsModal()" class="flex flex-col items-center justify-center cursor-pointer group">
+            <div class="flex items-center space-x-1">
+                <span id="navActiveAccountBalance" class="font-mono font-bold text-sm tracking-wide text-white">PKR 0.00</span>
+                <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 group-hover:text-white transition"></i>
+            </div>
+            <span id="navActiveAccountLabel" class="text-[9px] text-gray-400 font-medium">PKR Account</span>
+        </div>
+
+        <!-- Right Hand Neon Wallet Action Trigger Button -->
+        <button onclick="openPaymentsModal()" class="w-9 h-8 rounded-lg neon-green-btn flex items-center justify-center shadow-lg shadow-emerald-500/10 active:scale-95 transition">
+            <i class="fa-solid fa-wallet text-sm"></i>
+        </button>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT AREA DECK FRAME -->
+    <main class="max-w-md mx-auto w-full flex-grow flex flex-col justify-between px-3 pt-2 space-y-2">
+        
+        <!-- Asset Setup Info Dropdown Array Line -->
+        <div class="flex items-center justify-between bg-[#161b22] p-2 rounded-xl border border-gray-800/40">
+            <div id="logoTapTarget" class="flex items-center space-x-2 bg-gray-800/40 px-3 py-1 rounded-lg cursor-pointer">
+                <div class="w-4 h-4 bg-amber-500 rounded flex items-center justify-center text-[10px] font-black text-black">A</div>
+                <span class="text-xs font-bold text-white tracking-wide">Asia Composite Index</span>
+                <span class="text-[11px] font-mono font-bold text-emerald-400">85%</span>
+                <i class="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button class="w-7 h-7 bg-gray-800/60 text-gray-400 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-compass"></i></button>
+                <button class="px-2 h-7 bg-gray-800/60 text-white font-mono font-bold rounded-lg text-[11px] flex items-center justify-center">5s</button>
+                <button class="w-7 h-7 bg-gray-800/60 text-gray-400 rounded-lg text-xs flex items-center justify-center"><i class="fa-solid fa-wave-square"></i></button>
+            </div>
+        </div>
+
+        <!-- MAIN GRAPH INTERACTIVE ENGINE SCREEN CANVAS BLOCK -->
+        <div class="flex-grow bg-[#11141a] border border-gray-900 rounded-2xl relative p-1 flex flex-col justify-center min-h-[280px]">
+            <div id="mainChartContainer" class="w-full h-full"></div>
+            
+            <!-- Real Time Floating Strike Coordinate Tag Floating Label -->
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900 border border-gray-700/80 rounded-l pl-2 pr-1 py-0.5 text-[11px] font-mono font-bold text-white flex items-center space-x-1.5 shadow-xl z-20">
+                <span id="chartCountdownTracker" class="text-gray-400 text-[10px] bg-gray-800 px-1 rounded">00:03</span>
+                <span id="chartFloatingAssetPrice" class="text-emerald-400">5984.13</span>
+            </div>
+        </div>
+
+        <!-- SYSTEM OPERATIONAL PARAMS METRICS INFO BAR (Fixed Time Indicators) -->
+        <div class="flex items-center justify-between text-[11px] px-1 text-gray-400 font-medium">
+            <span>Fixed Time mode</span>
+            <span class="font-mono text-emerald-400 font-semibold" id="potentialYieldLabel">Profit: +PKR 238</span>
+        </div>
+
+        <!-- INTERACTIVE BOTTOM ALLOCATION AND CONTROL TRANSMISSION PANEL SHEETS (Screenshot _28-39 Layout) -->
+        <div class="bg-[#161b22] border border-gray-800/60 rounded-2xl p-3 space-y-3 shadow-2xl">
+            
+            <!-- Amount & Timer Horizontal Stepper Pickers Inputs Matrix Grid -->
+            <div class="grid grid-cols-2 gap-2.5">
+                <div class="bg-[#1c222c] border border-gray-800 rounded-xl p-1.5 flex items-center justify-between text-center">
+                    <button onclick="adjustNumericInput('timer', -1)" class="w-8 h-8 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-300 font-bold flex items-center justify-center text-sm">-</button>
+                    <div class="flex flex-col">
+                        <span id="displayExpiryWindowValue" class="text-xs font-mono font-bold text-white">1 min</span>
+                    </div>
+                    <button onclick="adjustNumericInput('timer', 1)" class="w-8 h-8 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-300 font-bold flex items-center justify-center text-sm">+</button>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Security Password</label>
-                    <input type="password" id="authPassword" placeholder="••••••••" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#10b981]">
+
+                <div class="bg-[#1c222c] border border-gray-800 rounded-xl p-1.5 flex items-center justify-between text-center">
+                    <button onclick="adjustNumericInput('amount', -50)" class="w-8 h-8 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-300 font-bold flex items-center justify-center text-sm">-</button>
+                    <div class="flex flex-col">
+                        <span id="displayAllocationValue" class="text-xs font-mono font-bold text-white">PKR 280</span>
+                    </div>
+                    <button onclick="adjustNumericInput('amount', 50)" class="w-8 h-8 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-300 font-bold flex items-center justify-center text-sm">+</button>
                 </div>
-                <button id="mainAuthBtn" class="w-full bg-[#10b981] hover:bg-emerald-600 text-[#0b0f19] font-bold py-2.5 rounded-lg transition tracking-wider text-sm mt-2">Sign In</button>
-                <div class="relative flex py-2 items-center">
-                    <div class="flex-grow border-t border-gray-800"></div>
-                    <span class="flex-shrink mx-4 text-gray-500 text-xs uppercase">Or</span>
-                    <div class="flex-grow border-t border-gray-800"></div>
-                </div>
-                <button id="googleAuthBtn" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-2.5 rounded-lg transition text-sm flex items-center justify-center space-x-2 border border-gray-700">
-                    <span>Sign in with Google Account</span>
+            </div>
+
+            <!-- Double Launch High/Low Action Blocks Channels Trigger Deck -->
+            <div class="flex items-center space-x-2">
+                <button onclick="dispatchBinaryContract('PUT')" class="flex-1 h-12 rounded-xl trading-down-btn text-white font-bold flex items-center justify-between px-4 transition active:scale-95 shadow-lg shadow-rose-500/10">
+                    <span class="text-xs uppercase tracking-wider font-extrabold">Down</span>
+                    <i class="fa-solid fa-arrow-down text-sm"></i>
+                </button>
+                
+                <button class="w-12 h-12 rounded-xl bg-gray-800/60 hover:bg-gray-700 text-gray-300 flex items-center justify-center border border-gray-700/40">
+                    <i class="fa-solid fa-clock text-sm"></i>
+                </button>
+
+                <button onclick="dispatchBinaryContract('CALL')" class="flex-1 h-12 rounded-xl trading-up-btn text-slate-950 font-bold flex items-center justify-between px-4 transition active:scale-95 shadow-lg shadow-emerald-500/10">
+                    <span class="text-xs uppercase tracking-wider font-extrabold text-white">Up</span>
+                    <i class="fa-solid fa-arrow-up text-sm text-white"></i>
                 </button>
             </div>
-            <p class="text-xs text-center text-gray-400 mt-6">
-                <span id="authToggleText">First time at Trading1?</span> 
-                <button id="authToggleBtn" class="text-[#10b981] hover:underline font-medium ml-1">Open Account</button>
-            </p>
+        </div>
+
+    </main>
+
+    <!-- NATIVE APP BAR MENU FOOTER NAVIGATION OVERLAYS TABS (Visible Bottom Elements) -->
+    <div class="fixed bottom-0 left-0 right-0 h-14 bg-[#161b22] border-t border-gray-800/80 flex items-center justify-around z-30 max-w-md mx-auto px-2 shadow-2xl">
+        <button class="flex flex-col items-center justify-center text-[#00e676]"><i class="fa-solid fa-chart-line text-base"></i></button>
+        <button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300"><i class="fa-solid fa-arrow-right-arrows-left text-base"></i></button>
+        <button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 relative"><i class="fa-solid fa-trophy text-base"></i><span class="absolute -top-1.5 -right-2 w-3.5 h-3.5 bg-emerald-500 text-black text-[8px] font-black rounded-full flex items-center justify-center border border-black">1</span></button>
+        <button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300"><i class="fa-solid fa-bag-shopping text-base"></i></button>
+        <button class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300"><i class="fa-solid fa-circle-question text-base"></i></button>
+    </div>
+
+    <!-- OVERLAY SLIDE MODAL WINDOW 1: ACCOUNTS PANEL COMPONENT (Screenshot _51-35) -->
+    <div id="accountsModalLayout" class="fixed inset-0 bg-black/70 z-50 hidden flex items-end justify-center transition-all duration-300 backdrop-blur-sm">
+        <div class="bg-[#161b22] w-full max-w-md rounded-t-3xl border-t border-gray-800 p-5 space-y-5 animate-slide-up shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold text-white tracking-wide">Accounts</h2>
+                <button onclick="closeAccountsModal()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 flex items-center justify-center font-bold text-sm">✕</button>
+            </div>
+
+            <!-- Interactive Currency Balances List Stack Block Frame -->
+            <div class="space-y-3">
+                
+                <!-- Demo Account Option Wrapper Frame Block -->
+                <div onclick="selectPlatformAccountEnvironment('DEMO')" class="p-3.5 rounded-xl bg-gray-800/30 border border-gray-700/30 flex items-center justify-between cursor-pointer hover:bg-gray-800/60 transition">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-7 h-7 bg-amber-500/20 rounded-lg text-amber-500 font-bold text-xs flex items-center justify-center font-mono">Ð</div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-300">Demo account</p>
+                            <p id="modalDemoBalanceDisplay" class="text-sm font-mono font-black text-white mt-0.5">Ð58,766.67</p>
+                        </div>
+                    </div>
+                    <i id="checkIconDemo" class="fa-solid fa-circle-check text-emerald-400 text-sm hidden"></i>
+                </div>
+
+                <!-- PKR Real Cash Account Option Wrapper Frame Block -->
+                <div onclick="selectPlatformAccountEnvironment('PKR')" class="p-3.5 rounded-xl bg-gray-800/80 border-2 border-emerald-500/60 flex flex-col space-y-3 cursor-pointer transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-7 h-5 bg-emerald-800 rounded flex items-center justify-center text-[9px] text-white font-bold tracking-tighter border border-emerald-600">PK</div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-100">PKR Account</p>
+                                <p id="modalPkrBalanceDisplay" class="text-sm font-mono font-black text-white mt-0.5">PKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-400 text-xs px-1"></i>
+                            <i id="checkIconPkr" class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                        </div>
+                    </div>
+                    <!-- Sub Actions Shortcut Ribbon Array Links -->
+                    <div class="grid grid-cols-2 gap-2 pt-1.5">
+                        <button onclick="event.stopPropagation(); openPaymentsModal('withdraw')" class="py-2 rounded-xl bg-gray-700/60 hover:bg-gray-700 text-xs text-white font-bold transition">Withdraw</button>
+                        <button onclick="event.stopPropagation(); openPaymentsModal('deposit')" class="py-2 rounded-xl neon-green-btn text-xs transition">Deposit</button>
+                    </div>
+                </div>
+
+                <!-- USDT Crypto Corporate Asset Holding Wrapper Frame Block -->
+                <div onclick="selectPlatformAccountEnvironment('USDT')" class="p-3.5 rounded-xl bg-gray-800/30 border border-gray-700/30 flex items-center justify-between cursor-pointer hover:bg-gray-800/60 transition">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-7 h-7 bg-teal-500/10 rounded-lg text-teal-400 font-bold text-xs flex items-center justify-center"><i class="fa-brands fa-ethereum"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-300">USDT Account</p>
+                            <p id="modalUsdtBalanceDisplay" class="text-sm font-mono font-black text-white mt-0.5">USDT 0.00</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-ellipsis-vertical text-gray-400 text-xs px-1"></i>
+                        <i id="checkIconUsdt" class="fa-solid fa-circle-check text-emerald-400 text-sm hidden"></i>
+                    </div>
+                </div>
+
+                <!-- Add Extra Sandbox Environment Configuration Trigger Area -->
+                <button class="w-full py-3 border border-dashed border-gray-700 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-plus text-[10px]"></i> <span>Add Account</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Main Platform Framework Dashboard -->
-    <div id="dashboardScreen" class="hidden min-h-screen flex flex-col">
-        
-        <!-- Header Navigation Bar -->
-        <nav class="border-b border-gray-800 bg-[#0b0f19]/50 backdrop-blur-md sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <!-- Secret Tap Target Box Logo -->
-                <div id="logoTapTarget" class="flex items-center space-x-2 cursor-pointer select-none group">
-                    <div class="w-8 h-8 bg-[#10b981] rounded-lg flex items-center justify-center font-bold text-[#0b0f19] group-hover:scale-105 transition">T1</div>
-                    <span class="text-xl font-bold tracking-wider text-white">Trading<span class="text-[#10b981]">1</span></span>
-                </div>
-
-                <!-- Center Multi Currency Global Scale Controls -->
-                <div class="bg-gray-900 border border-gray-800 p-1 rounded-xl flex items-center space-x-1">
-                    <button id="currencyUsdBtn" class="px-3 py-1 text-xs font-bold rounded-lg bg-[#10b981] text-[#0b0f19] transition">USD ($)</button>
-                    <button id="currencyPkrBtn" class="px-3 py-1 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition">PKR (Rs)</button>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <span id="userEmailDisplay" class="text-xs text-gray-400 bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg font-mono"></span>
-                    <button id="logoutBtn" class="text-xs font-semibold bg-gray-800 hover:bg-red-900 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition border border-gray-700">Logout</button>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Dynamic Content Engine Area -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
-            
-            <!-- Financial Core Dashboard Statistics Tickers -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-[#111827] border border-gray-800 p-5 rounded-xl border-l-4 border-[#10b981]">
-                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Available Capital Balance</p>
-                    <p id="valWalletBalance" class="text-2xl font-mono font-bold text-white mt-1" data-usd="10000.00">$10,000.00</p>
-                    <div class="flex space-x-4 mt-2">
-                        <button onclick="toggleFundingModal('deposit')" class="text-xs text-[#10b981] font-bold hover:underline">↑ Instant Deposit</button>
-                        <button onclick="toggleFundingModal('withdraw')" class="text-xs text-gray-400 font-bold hover:underline">↓ Request Cashout</button>
-                    </div>
-                </div>
-                <div class="bg-[#111827] border border-gray-800 p-5 rounded-xl">
-                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Net Account Equity</p>
-                    <p id="valTotalEquity" class="text-2xl font-mono font-bold text-white mt-1">$10,000.00</p>
-                    <span class="text-[10px] text-gray-500">Real-time margin value valuation</span>
-                </div>
-                <div class="bg-[#111827] border border-gray-800 p-5 rounded-xl flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">Selected Asset Focus</p>
-                        <p id="activeAssetTitle" class="text-xl font-bold text-white mt-1">BTC/USD</p>
-                    </div>
-                    <div class="text-right">
-                        <p id="activeAssetPrice" class="text-xl font-mono font-bold text-[#10b981]">$65,000.00</p>
-                        <span id="activeAssetBadge" class="text-[10px] font-bold text-[#10b981] bg-emerald-500/10 px-1.5 py-0.5 rounded">▲ UP</span>
-                    </div>
-                </div>
+    <!-- OVERLAY SLIDE MODAL WINDOW 2: PAYMENTS INTERFACE MATRIX DECK PANEL (Screenshot _51-42 Layout) -->
+    <div id="paymentsModalLayout" class="fixed inset-0 bg-black/70 z-50 hidden flex items-end justify-center transition-all duration-300 backdrop-blur-sm">
+        <div class="bg-[#161b22] w-full max-w-md rounded-t-3xl border-t border-gray-800 p-5 space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h2 class="text-lg font-bold text-white tracking-wide">Payments</h2>
+                <button onclick="closePaymentsModal()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 flex items-center justify-center font-bold text-sm">✕</button>
             </div>
 
-            <!-- Terminal Row Section Dashboard Core -->
-            <div id="mainTradingTerminal" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <!-- Left Column: Asset Discovery Hub -->
-                <div class="bg-[#111827] border border-gray-800 p-4 rounded-xl h-[560px] flex flex-col">
-                    <h3 class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Asset Discovery Hub</h3>
-                    <input type="text" id="assetSearchInput" placeholder="Filter crypto, stocks, forex..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#10b981] mb-3">
-                    <div id="assetDiscoveryList" class="flex-grow overflow-y-auto space-y-1 pr-1 custom-scrollbar"></div>
-                </div>
-
-                <!-- Center Columns: Charts & Positions Matrix -->
-                <div class="lg:col-span-2 flex flex-col space-y-6">
-                    <div class="bg-[#111827] border border-gray-800 p-4 rounded-xl">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Interactive Live Trend Monitor</h3>
-                            <span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
-                        </div>
-                        <div id="chartContainer" class="w-full h-[240px]"></div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-gray-800 p-4 rounded-xl flex-grow overflow-hidden flex flex-col">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Active Operational Positions</h3>
-                        <div class="overflow-x-auto flex-grow max-h-[180px] custom-scrollbar">
-                            <table class="w-full text-left text-xs">
-                                <thead>
-                                    <tr class="border-b border-gray-800 font-semibold uppercase text-gray-400">
-                                        <th class="pb-2">Asset</th>
-                                        <th class="pb-2">Side</th>
-                                        <th class="pb-2">Entry / Current</th>
-                                        <th class="pb-2">Live P&L</th>
-                                        <th class="pb-2 text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="positionsTable" class="divide-y divide-gray-800/50">
-                                    <tr id="emptyRow"><td colspan="5" class="py-6 text-center text-gray-500">No open risk operations detected.</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Order Execution Board -->
-                <div class="bg-[#111827] border border-gray-800 p-4 rounded-xl h-fit">
-                    <h3 class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Execution Panel</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-[10px] font-medium text-gray-400 uppercase mb-1">Target Asset Asset</label>
-                            <input type="text" id="displayActiveAsset" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs font-bold text-[#10b981] focus:outline-none" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-medium text-gray-400 uppercase mb-1">Volume Allocation (Units)</label>
-                            <input type="number" id="tradeAmount" value="1" step="0.01" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-[#10b981]">
-                            <p id="estimatedCost" class="text-[10px] text-gray-500 mt-1">Est. Exposure: $0.00</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-medium text-gray-400 uppercase mb-1">Take Profit</label>
-                                <input type="number" id="tradeTP" placeholder="Target" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#10b981]">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-gray-400 uppercase mb-1">Stop Loss</label>
-                                <input type="number" id="tradeSL" placeholder="Floor" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#ef4444]">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 pt-2">
-                            <button id="buyBtn" class="bg-[#10b981] hover:bg-emerald-600 text-[#0b0f19] font-bold py-2.5 rounded-lg transition uppercase tracking-wider text-xs">Buy / Long</button>
-                            <button id="sellBtn" class="bg-[#ef4444] hover:bg-red-600 text-white font-bold py-2.5 rounded-lg transition uppercase tracking-wider text-xs">Sell / Short</button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Big Stacked Uniform Grid Panel Items List Menu Options Columns -->
+            <div id="paymentsMenuStackList" class="space-y-2.5">
+                <button onclick="switchPaymentsViewSubForm('deposit')" class="w-full py-3.5 px-4 rounded-xl neon-green-btn flex items-center space-x-3 transition active:scale-[0.99]">
+                    <i class="fa-solid fa-wallet text-sm"></i> <span class="text-xs uppercase font-black tracking-wider">Deposit</span>
+                </button>
+                <button onclick="switchPaymentsViewSubForm('withdraw')" class="w-full py-3.5 px-4 rounded-xl bg-gray-800 text-gray-200 hover:text-white flex items-center space-x-3 transition active:scale-[0.99]">
+                    <i class="fa-solid fa-money-bill-transfer text-sm text-gray-400"></i> <span class="text-xs uppercase font-bold tracking-wider">Withdraw</span>
+                </button>
+                <button class="w-full py-3.5 px-4 rounded-xl bg-gray-800 text-gray-200 hover:text-white flex items-center space-x-3 transition opacity-50 cursor-not-allowed">
+                    <i class="fa-solid fa-right-left text-sm text-gray-400"></i> <span class="text-xs uppercase font-bold tracking-wider">Transfer</span>
+                </button>
+                <button onclick="switchPaymentsViewSubForm('history')" class="w-full py-3.5 px-4 rounded-xl bg-gray-800 text-gray-200 hover:text-white flex items-center space-x-3 transition active:scale-[0.99]">
+                    <i class="fa-solid fa-clock-rotate-left text-sm text-gray-400"></i> <span class="text-xs uppercase font-bold tracking-wider">Transactions</span>
+                </button>
             </div>
 
-            <!-- Funding Transactions History Logs Section -->
-            <div class="bg-[#111827] border border-gray-800 p-5 rounded-xl">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Capital Ledger Funding History</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="border-b border-gray-800 font-semibold uppercase text-gray-400">
-                                <th class="pb-2">Timestamp</th>
-                                <th class="pb-2">Operation Type</th>
-                                <th class="pb-2">Method Channel</th>
-                                <th class="pb-2">Amount Requested</th>
-                                <th class="pb-2">Verification ID / TID</th>
-                                <th class="pb-2">Status Flag</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fundingLogsTable" class="divide-y divide-gray-800/50">
-                            <tr><td colspan="6" class="py-4 text-center text-gray-500">No funding operations logged yet.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Corporate Transparency Footer Details Information -->
-            <footer class="border-t border-gray-800 pt-8 mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-gray-400">
-                <div>
-                    <h4 class="font-bold text-white uppercase tracking-wider mb-3">Trading1 Institutional Compliance</h4>
-                    <p class="leading-relaxed">Trading1 is a premier global brokerage terminal regulated under multiple multi-asset derivative frameworks. Licensed registry validation number #5426224-BrokerCorp. Operations structured across institutional decentralized processing centers.</p>
-                    <p class="mt-3 text-gray-500">&copy; 2026 Trading1 Corp. All rights reserved.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white uppercase tracking-wider mb-3">Frequently Asked Security Parameters (FAQ)</h4>
-                    <div class="space-y-3">
-                        <div>
-                            <p class="text-white font-medium">What is the minimum requirement threshold?</p>
-                            <p class="text-gray-500">Deposits initialize at $1 USD / Rs 278 PKR. Withdrawals require a minimum baseline parameter of $2 USD / Rs 556 PKR.</p>
-                        </div>
-                        <div>
-                            <p class="text-white font-medium">What is the capital settlement schedule timeline?</p>
-                            <p class="text-gray-500">All submissions pass through administrative secret key authorization ledgers within 1 to 24 hourly periods.</p>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white uppercase tracking-wider mb-3">Privacy Framework & Risk Protocols</h4>
-                    <p class="leading-relaxed">All transaction receipts, upload validation buffers, and dynamic profile signatures undergo local sandboxed encryption logic pipelines. Margin derivative operations involve structural risk exposures.</p>
-                    <p class="mt-2 text-white font-semibold">Location: <span class="text-gray-400 font-normal">Global Hub Alpha, Commercial Zone 1, Gilgit Financial District.</span></p>
-                </div>
-            </footer>
-        </main>
-
-        <!-- SECRET ADMIN OVERLAY INTERACTIVE TERMINAL HUB -->
-        <main id="secretAdminTerminal" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
-            <div class="bg-gray-900 border border-yellow-600/40 p-6 rounded-xl">
-                <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full bg-yellow-500 animate-ping"></span>
-                        <h2 class="text-lg font-bold text-yellow-500 uppercase font-mono tracking-widest">Trading1 Secret Registry Override Panel</h2>
-                    </div>
-                    <button onclick="deactivateAdminTerminal()" class="bg-gray-800 hover:bg-gray-700 text-xs text-white px-3 py-1 rounded-lg">Return to Trading Floor</button>
+            <!-- Dynamic Sub-Forms Inputs Field Sets Container Context -->
+            <div id="paymentsActionSubInterfaceBox" class="hidden space-y-4">
+                <div class="flex items-center space-x-2 text-xs text-amber-400 font-bold bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20">
+                    <i class="fa-solid fa-circle-exclamation text-sm"></i>
+                    <span>Authorized Core Routing Terminal Node Operations Channels:</span>
                 </div>
                 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-mono">
-                        <thead>
-                            <tr class="border-b border-gray-800 uppercase text-gray-400">
-                                <th class="pb-2">ID/Time</th>
-                                <th class="pb-2">User/Legal Scope</th>
-                                <th class="pb-2">Method & Details</th>
-                                <th class="pb-2">Amount Requested</th>
-                                <th class="pb-2">Proof Upload File</th>
-                                <th class="pb-2 text-right">Operational Judgement</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminManagementTable" class="divide-y divide-gray-800/50">
-                            <!-- Populated dynamically via state engine storage data -->
-                        </tbody>
-                    </table>
+                <!-- Inner Deposit Setup Wire Fields Layout Elements Box -->
+                <div id="subFormFieldsDeposit" class="hidden space-y-3 text-xs">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-gray-800 space-y-1.5 font-mono text-gray-400">
+                        <p><span class="text-emerald-400 font-bold">JazzCash Node Pool:</span> 03705519562</p>
+                        <p><span class="text-emerald-400 font-bold">EasyPaisa Distribution:</span> 03379827882</p>
+                    </div>
+                    <input type="number" id="inputDepositAmountVal" value="280" class="w-full bg-slate-950 border border-gray-800 rounded-xl p-3 text-white font-mono font-bold focus:outline-none focus:border-emerald-500" placeholder="Amount Capacity (PKR)">
+                    <input type="text" id="inputDepositTIDVal" class="w-full bg-slate-950 border border-gray-800 rounded-xl p-3 text-white font-mono focus:outline-none focus:border-emerald-500" placeholder="Verification TID String Key">
+                    <button onclick="commitFundingFormTransmission('DEP')" class="w-full py-3 neon-green-btn rounded-xl uppercase text-xs font-black tracking-wider">Submit Deposit Invoice</button>
                 </div>
-            </div>
-        </main>
-    </div>
 
-    <!-- CAPITAL COMPLIANCE INTERACTIVE FUNDING DIALOG MODAL -->
-    <div id="fundingModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#111827] border border-gray-800 p-6 rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
-                <h3 id="fundingModalTitle" class="text-base font-bold text-white uppercase tracking-wider">Gateway System</h3>
-                <button onclick="toggleFundingModal()" class="text-gray-400 hover:text-white font-bold font-mono">✕</button>
-            </div>
+                <!-- Inner Cashout Settlement Fields Layout Box -->
+                <div id="subFormFieldsWithdraw" class="hidden space-y-3 text-xs">
+                    <input type="number" id="inputWithdrawAmountVal" value="500" class="w-full bg-slate-950 border border-gray-800 rounded-xl p-3 text-white font-mono font-bold focus:outline-none focus:border-rose-500" placeholder="Withdrawal Allocation (PKR)">
+                    <input type="text" id="inputWithdrawTargetNumber" class="w-full bg-slate-950 border border-gray-800 rounded-xl p-3 text-white font-mono focus:outline-none focus:border-rose-500" placeholder="Receiver Mobile Account Number (03XXXXXXXXX)">
+                    <button onclick="commitFundingFormTransmission('WTH')" class="w-full py-3 bg-rose-500 text-white rounded-xl uppercase text-xs font-black tracking-wider">Request Liquidation Wire</button>
+                </div>
 
-            <!-- MODAL INTERACTIVE FORM CONTAINER -->
-            <div id="depositFormFields" class="space-y-4 hidden">
-                <div class="bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-2 text-xs">
-                    <p class="text-yellow-500 font-bold uppercase">Official Receiving Node Addresses:</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-gray-300">
-                        <div class="bg-[#0b0f19] p-2 rounded">
-                            <span class="text-[#10b981] font-bold">JazzCash / value="SADApay">SADApay (03705519562)</option>
-                            <option value="EasyPaisa">EasyPaisa (03379827882)</option>
-                            <option value="Binance">Binance Merchant Pay Network</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Amount ($ USD Capital)</label>
-                        <input type="number" id="depAmount" value="10" min="1" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs font-mono focus:outline-none focus:border-[#10b981]">
-                        <p id="depPkrCalc" class="text-[10px] text-gray-500 mt-1">Est: Rs 2,780 PKR</p>
-                    </div>
+                <!-- Inner Transactional History Logs List Deck Canvas -->
+                <div id="subFormFieldsHistory" class="hidden max-h-[220px] overflow-y-auto custom-scrollbar space-y-2">
+                    <p class="text-center text-gray-500 text-xs py-4" id="emptyLogsTextFallback">No recorded clear funding vectors tracked in local buffer.</p>
+                    <div id="innerLogsOutputStackArea" class="space-y-1.5"></div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Legal Name</label>
-                        <input type="text" id="depLegalName" placeholder="John Doe" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs focus:outline-none focus:border-[#10b981]">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Transaction ID / TID Proof</label>
-                        <input type="text" id="depTid" placeholder="TID88471264" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs font-mono focus:outline-none focus:border-[#10b981]">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase text-gray-400 mb-1">Upload Receipt Proof (Image Document Screenshot)</label>
-                    <input type="file" id="depFile" accept="image/*" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-1.5 text-xs text-gray-400 focus:outline-none">
-                </div>
-                <button onclick="processSubmitDeposit()" class="w-full bg-[#10b981] text-[#0b0f19] font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Transmit Deposit Wire</button>
-            </div>
 
-            <!-- WITHDRAWAL SUBMISSION FORM FIELDS -->
-            <div id="withdrawFormFields" class="space-y-4 hidden">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Target Account Method</label>
-                        <select id="wdMethod" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs focus:outline-none">
-                            <option value="JazzCash">JazzCash Routing Profile</option>
-                            <option value="SADApay">SADApay Settlement Wallet</option>
-                            <option value="EasyPaisa">EasyPaisa Mobile Banking</option>
-                            <option value="Binance">Binance Pay (UID String Link)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Cashout Volume ($ USD)</label>
-                        <input type="number" id="wdAmount" value="20" min="2" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs font-mono focus:outline-none">
-                        <p id="wdPkrCalc" class="text-[10px] text-gray-500 mt-1">Est Receive: Rs 5,560 PKR</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Profile Username Reference</label>
-                        <input type="text" id="wdUser" placeholder="trader123" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase text-gray-400 mb-1">Account Holder Legal Title Name</label>
-                        <input type="text" id="wdLegal" placeholder="Asif Khan" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs focus:outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase text-gray-400 mb-1">Target Destination Account Number / Binance UID</label>
-                    <input type="text" id="wdNumber" placeholder="03XXXXXXXXX or UID" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-xs font-mono focus:outline-none">
-                </div>
-                <button onclick="processSubmitWithdrawal()" class="w-full bg-[#ef4444] text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Commit Liquidation Dispatch</button>
+                <button onclick="revertToPaymentsMenuMainHome()" class="w-full py-2 bg-gray-800 text-gray-400 rounded-xl font-bold text-xs uppercase tracking-wide transition">Back to Payment Center</button>
             </div>
-
-            <!-- DIGITAL RECEIPT INVOICE RENDER VIEW SCREEN -->
-            <div id="receiptRenderBlock" class="hidden space-y-4 pt-2">
-                <div class="bg-white text-gray-900 p-5 rounded-xl font-mono text-xs border-2 border-dashed border-gray-300 space-y-2">
-                    <div class="text-center border-b border-gray-300 pb-2">
-                        <h4 class="font-bold text-sm uppercase tracking-widest">Trading1 Wire Voucher</h4>
-                        <p class="text-[10px] text-gray-500">Secured Crypto-Fiat Pipeline Settlement Node</p>
-                    </div>
-                    <p><strong>Invoice Type:</strong> <span id="recType">DEPOSIT</span></p>
-                    <p><strong>Legal Identity:</strong> <span id="recLegal">-</span></p>
-                    <p><strong>Channel Node:</strong> <span id="recMethod">-</span></p>
-                    <p><strong>Identifier Target:</strong> <span id="recTarget">-</span></p>
-                    <p><strong>Settlement Vol:</strong> <span class="text-sm font-bold" id="recVal">-</span></p>
-                    <p class="border-t border-gray-200 pt-2 text-[10px] text-center text-gray-400 font-sans">Verification tracking payload committed to memory index matrix. Awaiting admin clearance authorization code.</p>
-                </div>
-                <button onclick="toggleFundingModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-xs py-2 rounded-lg text-white font-bold uppercase">Acknowledge Ledger Broadcast</button>
-            </div>
-
         </div>
     </div>
 
-    <!-- SYSTEM MODULE ARCHITECTURE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <!-- SECRET CONTROL ADM OVERLAY PLATFORM MATRIX FRAME (Triggered via 5 rapid taps on Asset box) -->
+    <div id="backOfficeAdminConsolePanel" class="fixed inset-0 bg-[#0f1217] z-50 hidden p-4 flex flex-col font-mono text-xs">
+        <div class="flex justify-between items-center border-b border-gray-800 pb-2 mb-3">
+            <h3 class="text-amber-500 font-black tracking-widest uppercase">Trading1 Secret Back-Office Terminal Authorization Index</h3>
+            <button onclick="deactivateAdminInterfaceConsole()" class="bg-gray-800 text-white px-2.5 py-1 rounded text-[10px]">Exit Overlay</button>
+        </div>
+        <div class="flex-grow overflow-y-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-800 text-gray-500 text-[10px] uppercase">
+                        <th class="pb-1">ID Node String</th>
+                        <th class="pb-1">Dimension</th>
+                        <th class="pb-1">Capacity Amount</th>
+                        <th class="pb-1 text-right">Judgement Action Act</th>
+                    </tr>
+                </thead>
+                <tbody id="adminManagementTableBodyRows" class="divide-y divide-gray-900"></tbody>
+            </table>
+        </div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCsgXPW-h2NzAHMrDBIL_HjlU8wSpcgzvI",
-            authDomain: "course-3cc77.firebaseapp.com",
-            projectId: "course-3cc77",
-            appId: "1:136140432667:web:9f543dc3db8683944ddfbe"
+    <!-- MAIN CORE PLATFORM ARCHITECTURE DATA SCRIPT ENGINE CONTROL -->
+    <script>
+        // Internal Global Environment Management State Arrays Matrix
+        let platformActiveEnvironmentMode = 'DEMO'; // Switch options items: 'PKR', 'USDT'
+        let demoAccountCapitalBalanceSum = parseFloat(localStorage.getItem('ot_demo_bal') || '58766.67');
+        let pkrAccountCapitalBalanceSum = parseFloat(localStorage.getItem('ot_pkr_bal') || '0.00');
+        let usdtAccountCapitalBalanceSum = parseFloat(localStorage.getItem('ot_usdt_bal') || '0.00');
+
+        let allocationInputAmountStepValue = 280;
+        let selectedTimeExpirySecondsLength = 60;
+
+        let internalLiveGlobalApexChartInstance = null;
+        let runningActiveRealTimeContractsBufferList = [];
+        let globalCorporateFundingLedgerArray = JSON.parse(localStorage.getItem('ot_funding_ledger') || '[]');
+
+        let logoConsecutiveTapsClickCounter = 0;
+        let logoTapsTimerContextTimeoutRef = null;
+
+        const assetHistoryFeedsLiveDatabase = {
+            basePrice: 5984.10,
+            currentPrice: 5984.13,
+            historyArray: Array.from({length: 25}, () => 5984.10 + (Math.random() * 2 - 1))
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const googleProvider = new GoogleAuthProvider();
+        // Window UI Initializer Matrix Core Hooks
+        window.onload = function() {
+            renderActiveInterfaceMainDisplayValues();
+            initializeHighFrequencyLiveChart();
+            processActiveContractsLedgerTickingLoops();
+        };
 
-        let isSignUpMode = false;
-        const authScreen = document.getElementById('authScreen');
-        const dashboardScreen = document.getElementById('dashboardScreen');
-        const authTitle = document.getElementById('authTitle');
-        const mainAuthBtn = document.getElementById('mainAuthBtn');
-        const authToggleBtn = document.getElementById('authToggleBtn');
-        const userEmailDisplay = document.getElementById('userEmailDisplay');
+        function renderActiveInterfaceMainDisplayValues() {
+            // Update Top Header Context Displays Anchors points
+            const navBalLabel = document.getElementById('navActiveAccountBalance');
+            const navTitleLabel = document.getElementById('navActiveAccountLabel');
 
-        // Core State Values Structures Memory Bank
-        let activeCurrency = 'USD'; // Alternate Mode Configuration: PKR
-        const FX_RATE = 278.00; // 1 USD = 278 PKR Conversion Coefficient
-
-        let walletBalance = parseFloat(localStorage.getItem('t1_wallet') || '10000.00');
-        let selectedAsset = 'BTC';
-        let positions = [];
-        let chartInstance = null;
-        let logoTaps = 0;
-        let logoTapTimer = null;
-
-        // Initialize Funding Registry Ledger array from local memory strings cache matrix
-        let fundingLedger = JSON.parse(localStorage.getItem('t1_funding_ledger') || '[]');
-
-        const assetsDatabase = {};
-        const categories = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOT', 'DOGE', 'AVAX', 'LINK', 'AAPL', 'TSLA', 'NVDA', 'AMZN', 'MSFT', 'EURUSD', 'GBPUSD', 'USDJPY', 'GOLD', 'CRUDE'];
-        
-        categories.forEach((name) => {
-            let basePrice = 1.20;
-            if(name.includes('USD')) basePrice = 1.15;
-            if(['BTC','GOLD'].includes(name)) basePrice = name==='BTC' ? 65000 : 2300;
-            if(['AAPL','TSLA','NVDA','MSFT'].includes(name)) basePrice = Math.random() * 300 + 100;
-            if(['ETH','SOL'].includes(name)) basePrice = name==='ETH' ? 3400 : 140;
-
-            assetsDatabase[name] = {
-                symbol: name, price: basePrice,
-                history: Array.from({length: 15}, () => basePrice * (1 + (Math.random() * 0.04 - 0.02)))
-            };
-        });
-
-        // Event Handling Matrix Wireframe Connections
-        authToggleBtn.addEventListener('click', () => {
-            isSignUpMode = !isSignUpMode;
-            authTitle.innerText = isSignUpMode ? "Open Account Profile" : "Access Trading Floor";
-            mainAuthBtn.innerText = isSignUpMode ? "Register Account" : "Sign In";
-        });
-
-        mainAuthBtn.addEventListener('click', async () => {
-            const email = document.getElementById('authEmail').value.trim();
-            const password = document.getElementById('authPassword').value;
-            try {
-                if (isSignUpMode) { await createUserWithEmailAndPassword(auth, email, password); alert("Trading1 Profile Provisioned!"); }
-                else { await signInWithEmailAndPassword(auth, email, password); }
-            } catch (e) { alert(e.message); }
-        });
-
-        document.getElementById('googleAuthBtn').addEventListener('click', async () => { try { await signInWithPopup(auth, googleProvider); } catch(e) { alert(e.message); } });
-        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                authScreen.classList.add('hidden');
-                dashboardScreen.classList.remove('hidden');
-                userEmailDisplay.innerText = user.email || "Institutional Account";
-                initializeChart();
-                buildAssetDiscoveryUI();
-                switchAsset(selectedAsset);
-                updateBalancesUI();
-                renderFundingLogs();
-            } else { authScreen.classList.remove('hidden'); dashboardScreen.classList.add('hidden'); }
-        });
-
-        // Global Currency Interface Format Interceptors
-        function formatValue(amount, isAssetPrice = false) {
-            if (activeCurrency === 'USD') {
-                return `$${amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: isAssetPrice ? 4 : 2})}`;
+            if(platformActiveEnvironmentMode === 'DEMO') {
+                navBalLabel.innerText = `Ð${demoAccountCapitalBalanceSum.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+                navTitleLabel.innerText = "Demo account";
+            } else if(platformActiveEnvironmentMode === 'PKR') {
+                navBalLabel.innerText = `PKR ${pkrAccountCapitalBalanceSum.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+                navTitleLabel.innerText = "PKR Account";
             } else {
-                const pkrAmount = amount * FX_RATE;
-                return `Rs ${pkrAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: isAssetPrice ? 2 : 2})}`;
+                navBalLabel.innerText = `USDT ${usdtAccountCapitalBalanceSum.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+                navTitleLabel.innerText = "USDT Account";
             }
+
+            // Sync Slider Inside Elements Boxes Models Text Strings
+            document.getElementById('modalDemoBalanceDisplay').innerText = `Ð${demoAccountCapitalBalanceSum.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+            document.getElementById('modalPkrBalanceDisplay').innerText = `PKR ${pkrAccountCapitalBalanceSum.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+            document.getElementById('modalUsdtBalanceDisplay').innerText = `USDT ${usdtAccountCapitalBalanceSum.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+
+            // Save Structural Framework State Profiles Local Variables Storage Pools
+            localStorage.setItem('ot_demo_bal', demoAccountCapitalBalanceSum.toString());
+            localStorage.setItem('ot_pkr_bal', pkrAccountCapitalBalanceSum.toString());
+            localStorage.setItem('ot_usdt_bal', usdtAccountCapitalBalanceSum.toString());
+
+            document.getElementById('displayAllocationValue').innerText = `${platformActiveEnvironmentMode === 'DEMO' ? 'Ð' : (platformActiveEnvironmentMode === 'USDT' ? 'USDT' : 'PKR')} ${allocationInputAmountStepValue}`;
+            document.getElementById('potentialYieldLabel').innerText = `Profit: +${platformActiveEnvironmentMode === 'DEMO' ? 'Ð' : (platformActiveEnvironmentMode === 'USDT' ? 'USDT' : 'PKR')} ${Math.floor(allocationInputAmountStepValue * 0.85)}`;
         }
 
-        document.getElementById('currencyUsdBtn').addEventListener('click', () => {
-            activeCurrency = 'USD';
-            toggleCurrencyUIStyle('currencyUsdBtn', 'currencyPkrBtn');
-            forceGlobalUIRefresh();
-        });
-
-        document.getElementById('currencyPkrBtn').addEventListener('click', () => {
-            activeCurrency = 'PKR';
-            toggleCurrencyUIStyle('currencyPkrBtn', 'currencyUsdBtn');
-            forceGlobalUIRefresh();
-        });
-
-        function toggleCurrencyUIStyle(activeId, inactiveId) {
-            document.getElementById(activeId).className = "px-3 py-1 text-xs font-bold rounded-lg bg-[#10b981] text-[#0b0f19] transition";
-            document.getElementById(inactiveId).className = "px-3 py-1 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition";
-        }
-
-        function forceGlobalUIRefresh() {
-            updateBalancesUI();
-            switchAsset(selectedAsset);
-            renderPositions();
-            renderFundingLogs();
-        }
-
-        // Live Cost Estimate Updater
-        const updateEstimate = () => {
-            const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
-            const expUsd = assetsDatabase[selectedAsset].price * amount;
-            document.getElementById('estimatedCost').innerText = `Est. Exposure: ${formatValue(expUsd)}`;
+        // Stepper Selector Modifiers Actions Methods Controllers Links
+        window.adjustNumericInput = function(dimensionType, incrementCoefficientDelta) {
+            if(dimensionType === 'amount') {
+                allocationInputAmountStepValue = Math.max(10, allocationInputAmountStepValue + incrementCoefficientDelta);
+            } else {
+                selectedTimeExpirySecondsLength = Math.max(5, selectedTimeExpirySecondsLength + (incrementCoefficientDelta * 5));
+                document.getElementById('displayExpiryWindowValue').innerText = selectedTimeExpirySecondsLength >= 60 ? `${selectedTimeExpirySecondsLength/60} min` : `${selectedTimeExpirySecondsLength} sec`;
+            }
+            renderActiveInterfaceMainDisplayValues();
         };
-        document.getElementById('tradeAmount').addEventListener('input', updateEstimate);
 
-        // Core Balance Update Functions
-        function updateBalancesUI() {
-            let openPnl = 0;
-            positions.forEach(pos => { openPnl += calculatePNL(pos).amount; });
-            
-            document.getElementById('valWalletBalance').innerText = formatValue(walletBalance);
-            document.getElementById('valTotalEquity').innerText = formatValue(walletBalance + openPnl);
-            localStorage.setItem('t1_wallet', walletBalance.toString());
+        // Account Environment Slider Layer Switches Triggers Layout Bindings Connects
+        window.openAccountsModal = function() { document.getElementById('accountsModalLayout').classList.remove('hidden'); syncCheckedIconsCheckmarks(); };
+        window.closeAccountsModal = function() { document.getElementById('accountsModalLayout').classList.add('hidden'); };
+
+        window.selectPlatformAccountEnvironment = function(targetEnvKeyString) {
+            platformActiveEnvironmentMode = targetEnvKeyString;
+            renderActiveInterfaceMainDisplayValues();
+            syncCheckedIconsCheckmarks();
+            setTimeout(closeAccountsModal, 200);
+        };
+
+        function syncCheckedIconsCheckmarks() {
+            ['Demo', 'Pkr', 'Usdt'].forEach(k => {
+                document.getElementById(`checkIcon${k}`).classList.add('hidden');
+            });
+            if(platformActiveEnvironmentMode === 'DEMO') document.getElementById('checkIconDemo').classList.remove('hidden');
+            if(platformActiveEnvironmentMode === 'PKR') document.getElementById('checkIconPkr').classList.remove('hidden');
+            if(platformActiveEnvironmentMode === 'USDT') document.getElementById('checkIconUsdt').classList.remove('hidden');
         }
 
-        // Build Asset Selection Panel Grid
-        function buildAssetDiscoveryUI(filter = '') {
-            const list = document.getElementById('assetDiscoveryList');
-            if(!list) return; list.innerHTML = '';
+        // Payments Layer Sub Modules Triggers Channels Actions Interfaces
+        window.openPaymentsModal = function(directRouteSubViewMode = '') {
+            document.getElementById('paymentsModalLayout').classList.remove('hidden');
+            if(directRouteSubViewMode) { switchPaymentsViewSubForm(directRouteSubViewMode); }
+            else { revertToPaymentsMenuMainHome(); }
+        };
+        window.closePaymentsModal = function() { document.getElementById('paymentsModalLayout').classList.add('hidden'); };
+
+        window.switchPaymentsViewSubForm = function(subTargetKeyString) {
+            document.getElementById('paymentsMenuStackList').classList.add('hidden');
+            const box = document.getElementById('paymentsActionSubInterfaceBox'); box.classList.remove('hidden');
+
+            ['deposit', 'withdraw', 'history'].forEach(f => document.getElementById(`subFormFields${f.charAt(0).toUpperCase() + f.slice(1)}`).classList.add('hidden'));
             
-            Object.keys(assetsDatabase).forEach(sym => {
-                if(filter && !sym.toLowerCase().includes(filter.toLowerCase())) return;
-                const item = assetsDatabase[sym];
-                const div = document.createElement('div');
-                div.className = `flex justify-between items-center p-2 rounded-lg text-xs cursor-pointer transition border border-transparent ${selectedAsset === sym ? 'bg-gray-800 border-[#10b981]/40' : 'hover:bg-gray-900'}`;
-                div.innerHTML = `
-                    <div><p class="font-bold text-white">${sym}/USD</p><p class="text-[10px] text-gray-500">Derivative Feed</p></div>
-                    <div class="text-right"><p id="feed-p-${sym}" class="font-mono font-bold">${formatValue(item.price, true)}</p></div>
+            if(subTargetKeyString === 'deposit') document.getElementById('subFormFieldsDeposit').classList.remove('hidden');
+            if(subTargetKeyString === 'withdraw') document.getElementById('subFormFieldsWithdraw').classList.remove('hidden');
+            if(subTargetKeyString === 'history') { document.getElementById('subFormFieldsHistory').classList.remove('hidden'); syncUIRenderedHistoryLogsItems(); }
+        };
+
+        window.revertToPaymentsMenuMainHome = function() {
+            document.getElementById('paymentsActionSubInterfaceBox').classList.add('hidden');
+            document.getElementById('paymentsMenuStackList').classList.remove('hidden');
+        };
+
+        // Appending Wire Invoices Payload Matrix Units Array
+        window.commitFundingFormTransmission = function(typeSignatureKey) {
+            const calculatedTimestampNodeId = 'INV-' + Math.floor(Math.random()*90000 + 10000);
+            let inputtedVolumeValue = 0;
+            let transactionNoteCoordinateString = '';
+
+            if(typeSignatureKey === 'DEP') {
+                inputtedVolumeValue = parseFloat(document.getElementById('inputDepositAmountVal').value) || 0;
+                transactionNoteCoordinateString = document.getElementById('inputDepositTIDVal').value.trim();
+                if(inputtedVolumeValue < 10 || !transactionNoteCoordinateString) return alert("All billing transaction identification numbers fields are mandatory inputs.");
+            } else {
+                inputtedVolumeValue = parseFloat(document.getElementById('inputWithdrawAmountVal').value) || 0;
+                transactionNoteCoordinateString = document.getElementById('inputWithdrawTargetNumber').value.trim();
+                
+                let activeDeductionSourceWalletLevelValue = platformActiveEnvironmentMode === 'DEMO' ? demoAccountCapitalBalanceSum : (platformActiveEnvironmentMode === 'USDT' ? usdtAccountCapitalBalanceSum : pkrAccountCapitalBalanceSum);
+                if(inputtedVolumeValue > activeDeductionSourceWalletLevelValue) return alert("System Risk Breach. Clearance limit failure from capital holdings balance pool.");
+
+                // Hold balance assets immediately inside internal pipeline array balance limits checks
+                if(platformActiveEnvironmentMode === 'DEMO') demoAccountCapitalBalanceSum -= inputtedVolumeValue;
+                else if(platformActiveEnvironmentMode === 'USDT') usdtAccountCapitalBalanceSum -= inputtedVolumeValue;
+                else pkrAccountCapitalBalanceSum -= inputtedVolumeValue;
+            }
+
+            const billingTransactionPayloadLogItem = {
+                id: calculatedTimestampNodeId,
+                type: typeSignatureKey === 'DEP' ? 'deposit' : 'withdraw',
+                amount: inputtedVolumeValue,
+                coordinate: transactionNoteCoordinateString,
+                status: 'Pending',
+                env: platformActiveEnvironmentMode,
+                dateString: new Date().toLocaleTimeString()
+            };
+
+            globalCorporateFundingLedgerArray.unshift(billingTransactionPayloadLogItem);
+            localStorage.setItem('ot_funding_ledger', JSON.stringify(globalCorporateFundingLedgerArray));
+            renderActiveInterfaceMainDisplayValues();
+            alert(`Broadcasting Settlement Sequence Token Key: ${calculatedTimestampNodeId}. Awaiting corporate validation framework clearance check rows.`);
+            revertToPaymentsMenuMainHome();
+        };
+
+        function syncUIRenderedHistoryLogsItems() {
+            const listArea = document.getElementById('innerLogsOutputStackArea');
+            const textFallback = document.getElementById('emptyLogsTextFallback');
+            if(globalCorporateFundingLedgerArray.length === 0) { listArea.innerHTML = ''; textFallback.classList.remove('hidden'); return; }
+
+            textFallback.classList.add('hidden'); listArea.innerHTML = '';
+            globalCorporateFundingLedgerArray.forEach(log => {
+                const badgeStyleColorClass = log.status === 'Approved' ? 'text-emerald-400' : (log.status === 'Rejected' ? 'text-rose-500' : 'text-amber-400 animate-pulse');
+                const row = document.createElement('div');
+                row.className = "bg-slate-950 p-2 rounded-xl border border-gray-900 flex justify-between items-center text-[11px] font-mono";
+                row.innerHTML = `
+                    <div>
+                        <p class="font-bold text-white uppercase">${log.type} (${log.env})</p>
+                        <p class="text-gray-500 text-[10px]">${log.dateString} | Ref:${log.coordinate}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black text-gray-200">${log.amount} ${log.env === 'DEMO'?'Ð':'PKR'}</p>
+                        <span class="font-bold uppercase ${badgeStyleColorClass}">${log.status}</span>
+                    </div>
                 `;
-                div.addEventListener('click', () => switchAsset(sym));
-                list.appendChild(div);
+                listArea.appendChild(row);
             });
         }
 
-        function switchAsset(symbol) {
-            selectedAsset = symbol;
-            document.getElementById('activeAssetTitle').innerText = `${symbol} / USD`;
-            document.getElementById('displayActiveAsset').value = `${symbol} / USD`;
-            buildAssetDiscoveryUI(document.getElementById('assetSearchInput').value);
-            updateEstimate();
-            updateChartData();
+        // Modern Candlestick/Line Hybrid ApexCharts High-Frequency Interactive Rendering Engine
+        function initializeHighFrequencyLiveChart() {
+            const initialDataPointsListPayload = assetHistoryFeedsLiveDatabase.historyArray;
+            const options = {
+                chart: { type: 'area', height: '100%', width: '100%', toolbar: { show: false }, sparkline: { enabled: false }, animations: { enabled: true, easing: 'linear', speed: 100 }, background: 'transparent' },
+                series: [{ name: 'Price Feed Index Index', data: initialDataPointsListPayload }],
+                colors: ['#00e676'],
+                stroke: { width: 2.5, curve: 'smooth' },
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.25, opacityTo: 0.0, stopOnAllowed: true } },
+                grid: { show: true, borderColor: '#161b22', strokeDashArray: 3, padding: { right: 50, left: 10 } },
+                theme: { mode: 'dark' },
+                xaxis: { labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false } },
+                yaxis: { show: true, labels: { style: { colors: '#4b5563', fontFamily: 'monospace' } }, side: 'right', opposite: true }
+            };
+            if(internalLiveGlobalApexChartInstance) internalLiveGlobalApexChartInstance.destroy();
+            internalLiveGlobalApexChartInstance = new ApexCharts(document.getElementById("mainChartContainer"), options);
+            internalLiveGlobalApexChartInstance.render();
         }
 
-        document.getElementById('assetSearchInput').addEventListener('input', (e) => {
-            const query = e.target.value.toUpperCase().trim();
-            if(query && !assetsDatabase[query] && query.length <= 6) {
-                assetsDatabase[query] = { symbol: query, price: Math.random() * 400 + 5, history: Array.from({length:15}, () => Math.random()*400+5) };
-            }
-            buildAssetDiscoveryUI(e.target.value);
-        });
-
-        // High Frequency Global Clock Ticker Pipeline Loop
+        // Continuous High Frequency Intermittent Pricing Engine Broadcast Ticking Task Loops
         setInterval(() => {
-            Object.keys(assetsDatabase).forEach(sym => {
-                const asset = assetsDatabase[sym];
-                const change = (Math.random() * 0.6 - 0.3) / 100;
-                const oldPrice = asset.price;
-                asset.price = oldPrice * (1 + change);
-                asset.history.push(asset.price); if(asset.history.length > 20) asset.history.shift();
+            const originalBasePriceIndexValue = assetHistoryFeedsLiveDatabase.currentPrice;
+            const microPriceOscillationDeltaValue = (Math.random() * 0.16 - 0.08);
+            
+            assetHistoryFeedsLiveDatabase.currentPrice = originalBasePriceIndexValue + microPriceOscillationDeltaValue;
+            assetHistoryFeedsLiveDatabase.historyArray.push(assetHistoryFeedsLiveDatabase.currentPrice);
+            if(assetHistoryFeedsLiveDatabase.historyArray.length > 30) assetHistoryFeedsLiveDatabase.historyArray.shift();
 
-                const feedEl = document.getElementById(`feed-p-${sym}`);
-                if(feedEl) {
-                    feedEl.innerText = formatValue(asset.price, true);
-                    feedEl.className = asset.price >= oldPrice ? 'font-mono text-[#10b981]' : 'font-mono text-[#ef4444]';
-                }
+            // Refresh Anchors Targets elements items blocks labels
+            document.getElementById('chartFloatingAssetPrice').innerText = assetHistoryFeedsLiveDatabase.currentPrice.toFixed(2);
+            document.getElementById('chartFloatingAssetPrice').className = assetHistoryFeedsLiveDatabase.currentPrice >= originalBasePriceIndexValue ? "text-emerald-400":"text-rose-500";
 
-                if(sym === selectedAsset) {
-                    const priceEl = document.getElementById('activeAssetPrice');
-                    const badge = document.getElementById('activeAssetBadge');
-                    priceEl.innerText = formatValue(asset.price, true);
-                    if(asset.price >= oldPrice) {
-                        priceEl.className = "text-xl font-mono font-bold text-[#10b981]";
-                        badge.innerText = "▲ UP"; badge.className = "text-[10px] font-bold text-[#10b981] bg-emerald-500/10 px-1.5 py-0.5 rounded";
-                    } else {
-                        priceEl.className = "text-xl font-mono font-bold text-[#ef4444]";
-                        badge.innerText = "▼ DOWN"; badge.className = "text-[10px] font-bold text-[#ef4444] bg-red-500/10 px-1.5 py-0.5 rounded";
+            if(internalLiveGlobalApexChartInstance) {
+                internalLiveGlobalApexChartInstance.updateSeries([{ data: assetHistoryFeedsLiveDatabase.historyArray }]);
+            }
+
+            // Continuous Evaluation Processes on Operating Live Option Positions Positions
+            processActiveContractsLedgerTickingLoops();
+        }, 1000);
+
+        // Binary Derivatives Trading Operation Action Logic Handles (Includes Dynamic Broker Node Balance Mitigation Risk Shield)
+        window.dispatchBinaryContract = function(vectorDirectionKeyString) {
+            let activeWalletBalanceLevelValue = platformActiveEnvironmentMode === 'DEMO' ? demoAccountCapitalBalanceSum : (platformActiveEnvironmentMode === 'USDT' ? usdtAccountCapitalBalanceSum : pkrAccountCapitalBalanceSum);
+            
+            if(allocationInputAmountStepValue <= 0) return alert("Invalid contract entry configuration range values.");
+            if(allocationInputAmountStepValue > activeWalletBalanceLevelValue) return alert("Declined entry operation lines. Account balances limits exhaustion boundaries met.");
+
+            if(platformActiveEnvironmentMode === 'DEMO') demoAccountCapitalBalanceSum -= allocationInputAmountStepValue;
+            else if(platformActiveEnvironmentMode === 'USDT') usdtAccountCapitalBalanceSum -= allocationInputAmountStepValue;
+            else pkrAccountCapitalBalanceSum -= allocationInputAmountStepValue;
+
+            const lockedEntryIndexStrikePoint = assetHistoryFeedsLiveDatabase.currentPrice;
+            const singleContractOptionPositionRowItemPayload = {
+                id: 'TXN-' + Math.floor(Math.random()*90000 + 10000),
+                direction: vectorDirectionKeyString,
+                strikePrice: lockedEntryIndexStrikePoint,
+                amount: allocationInputAmountStepValue,
+                timeRemainingSeconds: selectedTimeExpirySecondsLength,
+                env: platformActiveEnvironmentMode
+            };
+
+            runningActiveRealTimeContractsBufferList.push(singleContractOptionPositionRowItemPayload);
+            renderActiveInterfaceMainDisplayValues();
+        };
+
+        function processActiveContractsLedgerTickingLoops() {
+            if(runningActiveRealTimeContractsBufferList.length === 0) {
+                document.getElementById('chartCountdownTracker').innerText = "00:03";
+                return;
+            }
+
+            const currentLivePriceSnapshotIndexValue = assetHistoryFeedsLiveDatabase.currentPrice;
+
+            runningActiveRealTimeContractsBufferList.forEach(c => {
+                c.timeRemainingSeconds--;
+                document.getElementById('chartCountdownTracker').innerText = `00:${c.timeRemainingSeconds < 10 ? '0' + c.timeRemainingSeconds : c.timeRemainingSeconds}`;
+
+                // --- BROKER PROTECTION SYSTEM RISK MANAGEMENT FORMULA (LOSS GENERATOR LOGIC LAYER) ---
+                // If a user registers trades with significant financial volume (> PKR 200 / > 200 units) inside Real live environments channels,
+                // the platform intercepts values inside terminal loops inside execution nodes at final countdown tick limits to adjust market momentum.
+                if(c.env !== 'DEMO' && c.amount >= 200 && c.timeRemainingSeconds === 1) {
+                    if(c.direction === 'CALL' && currentLivePriceSnapshotIndexValue >= c.strikePrice) {
+                        assetHistoryFeedsLiveDatabase.currentPrice = c.strikePrice - 0.05; // Force micro correction beneath strike index tag bounds
+                    } else if(c.direction === 'PUT' && currentLivePriceSnapshotIndexValue <= c.strikePrice) {
+                        assetHistoryFeedsLiveDatabase.currentPrice = c.strikePrice + 0.05; // Force dynamic push over position boundaries
                     }
                 }
             });
 
-            updateEstimate(); checkOrderTriggers(); renderPositions(); updateBalancesUI();
-            if(chartInstance) updateChartData();
-        }, 2000);
+            const stillActiveRunningPositionsList = runningActiveRealTimeContractsBufferList.filter(x => x.timeRemainingSeconds > 0);
+            const expiredPositionsToSettleList = runningActiveRealTimeContractsBufferList.filter(x => x.timeRemainingSeconds <= 0);
 
-        function calculatePNL(pos) {
-            const currentPrice = assetsDatabase[pos.asset].price;
-            let diff = currentPrice - pos.entryPrice;
-            if (pos.type === 'SELL') diff = pos.entryPrice - currentPrice;
-            return { amount: diff * pos.amount, percent: (diff / pos.entryPrice) * 100 };
-        }
+            runningActiveRealTimeContractsBufferList = stillActiveRunningPositionsList;
 
-        function executeTrade(type) {
-            const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
-            const tp = parseFloat(document.getElementById('tradeTP').value) || null;
-            const sl = parseFloat(document.getElementById('tradeSL').value) || null;
-            if(amount <= 0) return alert("Invalid allocation size volume.");
+            expiredPositionsToSettleList.forEach(c => {
+                const settlementPriceEndpointVal = assetHistoryFeedsLiveDatabase.currentPrice;
+                let outcomeWinFlagStatus = false;
 
-            const cost = assetsDatabase[selectedAsset].price * amount;
-            if(cost > walletBalance) return alert("Insufficient Capital Funds Reservoir.");
+                if(c.direction === 'CALL' && settlementPriceEndpointVal > c.strikePrice) outcomeWinFlagStatus = true;
+                if(c.direction === 'PUT' && settlementPriceEndpointVal < c.strikePrice) outcomeWinFlagStatus = true;
 
-            walletBalance -= cost;
-            positions.push({ id: Date.now(), asset: selectedAsset, type: type, entryPrice: assetsDatabase[selectedAsset].price, amount: amount, orderValue: cost, tp: tp, sl: sl });
-            
-            document.getElementById('tradeTP').value = ''; document.getElementById('tradeSL').value = '';
-            renderPositions(); updateBalancesUI();
-        }
-
-        function settleAndClose(id) {
-            const p = positions.find(x => x.id === id); if(!p) return;
-            walletBalance += (p.orderValue + calculatePNL(p).amount);
-            positions = positions.filter(x => x.id !== id);
-            renderPositions(); updateBalancesUI();
-        }
-
-        function checkOrderTriggers() {
-            positions.forEach(pos => {
-                const cur = assetsDatabase[pos.asset].price; let close = false;
-                if(pos.type === 'BUY') { if((pos.tp && cur >= pos.tp) || (pos.sl && cur <= pos.sl)) close = true; }
-                else { if((pos.tp && cur <= pos.tp) || (pos.sl && cur >= pos.sl)) close = true; }
-                if(close) settleAndClose(pos.id);
-            });
-        }
-
-        function renderPositions() {
-            const tbody = document.getElementById('positionsTable'); if(!tbody) return;
-            if(positions.length === 0) { tbody.innerHTML = `<tr id="emptyRow"><td colspan="5" class="py-6 text-center text-gray-500">No open risk operations detected.</td></tr>`; return; }
-            tbody.innerHTML = '';
-            positions.forEach(pos => {
-                const cur = assetsDatabase[pos.asset].price; const pnl = calculatePNL(pos);
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-800/10 text-xs border-b border-gray-800/30";
-                row.innerHTML = `
-                    <td class="py-2 font-bold">${pos.asset}</td>
-                    <td class="py-2"><span class="px-1 py-0.5 rounded font-bold text-[10px] ${pos.type==='BUY'?'text-[#10b981] bg-emerald-500/10':'text-[#ef4444] bg-red-500/10'}">${pos.type}</span></td>
-                    <td class="py-2 font-mono text-gray-400">${formatValue(pos.entryPrice)} → <span class="text-white">${formatValue(cur)}</span></td>
-                    <td class="py-2 font-mono font-bold ${pnl.amount>=0?'text-[#10b981]':'text-[#ef4444]'}">${pnl.amount>=0?'+':''}${formatValue(pnl.amount)}</td>
-                    <td class="py-2 text-right"><button data-id="${pos.id}" class="close-p-btn bg-gray-900 border border-gray-800 hover:bg-[#ef4444] px-2 py-1 rounded text-gray-300 hover:text-white transition">Close</button></td>
-                `;
-                tbody.appendChild(row);
-            });
-            document.querySelectorAll('.close-p-btn').forEach(b => b.addEventListener('click', (e) => settleAndClose(parseInt(e.target.getAttribute('data-id')))));
-        }
-
-        // Render Public Client Ledger Funding History Logs UI Grid Table
-        function renderFundingLogs() {
-            const tbody = document.getElementById('fundingLogsTable');
-            if(!tbody) return;
-            if(fundingLedger.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-gray-500">No funding operations logged yet.</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = '';
-            fundingLedger.forEach(log => {
-                let badgeClass = 'text-yellow-500 bg-yellow-500/10';
-                if(log.status === 'Approved') badgeClass = 'text-[#10b981] bg-emerald-500/10';
-                if(log.status === 'Rejected') badgeClass = 'text-[#ef4444] bg-red-500/10';
-
-                const row = document.createElement('tr');
-                row.className = "border-b border-gray-800/40 hover:bg-gray-900/40 text-xs";
-                row.innerHTML = `
-                    <td class="py-2.5 font-mono text-gray-500">${log.date}</td>
-                    <td class="py-2.5 font-bold uppercase ${log.type==='deposit'?'text-[#10b981]':'text-blue-400'}">${log.type}</td>
-                    <td class="py-2.5 font-medium">${log.method}</td>
-                    <td class="py-2.5 font-mono font-bold text-white">${formatValue(log.amount)}</td>
-                    <td class="py-2.5 font-mono text-gray-400">${log.tid || 'N/A'}</td>
-                    <td class="py-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">${log.status}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // --- SECRET COGNITIVE LOGO TAP SEQUENCING CONTROLLER ---
-        document.getElementById('logoTapTarget').addEventListener('click', () => {
-            logoTaps++;
-            clearTimeout(logoTapTimer);
-            logoTapTimer = setTimeout(() => { logoTaps = 0; }, 3000); // 3 Second vector horizon boundary
-
-            if (logoTaps >= 5) {
-                logoTaps = 0;
-                const adminKey = prompt("⚠️ Trading1 Critical Core Security Clearance Intercept.\nEnter Secret Admin Passcode Pattern Key:");
-                if(adminKey === "5426224") {
-                    alert("Access Granted. Transitioning operational interface dashboard architecture grid...");
-                    activateAdminTerminal();
+                if(outcomeWinFlagStatus) {
+                    const financialReturnCreditedYieldSum = c.amount * 1.85;
+                    if(c.env === 'DEMO') demoAccountCapitalBalanceSum += financialReturnCreditedYieldSum;
+                    else if(c.env === 'USDT') usdtAccountCapitalBalanceSum += financialReturnCreditedYieldSum;
+                    else pkrAccountCapitalBalanceSum += financialReturnCreditedYieldSum;
+                    
+                    alert(`🎉 Option Position Closed in Profit! Settlement yield processed: +${c.env==='DEMO'?'Ð':'PKR'} ${financialReturnCreditedYieldSum.toFixed(2)}`);
                 } else {
-                    alert("Unauthorized Authentication Vector Target Signature. Alert logged.");
+                    alert(`📉 Option Position Settled Out-of-the-Money. Market index momentum crossed opposite to your chosen position vector.`);
                 }
+            });
+
+            renderActiveInterfaceMainDisplayValues();
+        }
+
+        // --- ADMINISTRATIVE OFFICE INTERFACE INTERCEPTORS GATES CONNECTORS ---
+        document.getElementById('logoTapTarget').addEventListener('click', () => {
+            logoConsecutiveTapsClickCounter++;
+            clearTimeout(logoTapsTimerContextTimeoutRef);
+            logoTapsTimerContextTimeoutRef = setTimeout(() => logoConsecutiveTapsClickCounter = 0, 3000);
+
+            if(logoConsecutiveTapsClickCounter >= 5) {
+                logoConsecutiveTapsClickCounter = 0;
+                const passcode = prompt("Enter Secret Admin Passcode Pattern Key:");
+                if(passcode === "5426224") { activateAdminInterfaceConsoleOverlayRows(); }
+                else { alert("Access Denied. Signature verification error."); }
             }
         });
 
-        function activateAdminTerminal() {
-            document.getElementById('mainTradingTerminal').classList.add('hidden');
-            document.getElementById('secretAdminTerminal').classList.remove('hidden');
-            renderAdminManagementDashboard();
-        }
+        function activateAdminInterfaceConsoleOverlayRows() {
+            document.getElementById('backOfficeAdminConsolePanel').classList.remove('hidden');
+            const tbody = document.getElementById('adminManagementTableBodyRows'); tbody.innerHTML = '';
 
-        window.deactivateAdminTerminal = function() {
-            document.getElementById('secretAdminTerminal').classList.add('hidden');
-            document.getElementById('mainTradingTerminal').classList.remove('hidden');
-        };
-
-        // Render Secret Registry Dashboard View
-        function renderAdminManagementDashboard() {
-            const tbody = document.getElementById('adminManagementTable');
-            if(!tbody) return;
-            if(fundingLedger.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-gray-500">No operational ledger rows found to process.</td></tr>`;
+            if(globalCorporateFundingLedgerArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-600">No available transaction vectors needing review inside local memory.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = '';
-            fundingLedger.forEach((log) => {
-                const proofRender = log.proof ? `<img src="${log.proof}" class="w-12 h-12 rounded border border-gray-700 object-cover cursor-zoom-in" onclick="window.open(this.src)">` : '<span class="text-gray-600">No File</span>';
-                
-                const actionControls = log.status === 'Pending' ? `
+
+            globalCorporateFundingLedgerArray.forEach(log => {
+                const actionButtonRibbon = log.status === 'Pending' ? `
                     <div class="flex space-x-1 justify-end">
-                        <button onclick="adminActionOverride('${log.id}', 'Approved')" class="bg-[#10b981] hover:bg-emerald-600 text-[#0b0f19] px-2 py-1 rounded text-[10px] font-bold">Approve</button>
-                        <button onclick="adminActionOverride('${log.id}', 'Rejected')" class="bg-[#ef4444] hover:bg-red-600 text-white px-2 py-1 rounded text-[10px] font-bold">Reject</button>
+                        <button onclick="adminActionOverrideJudgement('${log.id}', 'Approved')" class="bg-emerald-500 text-black px-2 py-0.5 rounded text-[10px] font-bold uppercase">Approve</button>
+                        <button onclick="adminActionOverrideJudgement('${log.id}', 'Rejected')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase">Reject</button>
                     </div>
-                ` : `<span class="text-gray-500 text-[10px] font-bold uppercase">Settled (${log.status})</span>`;
+                ` : `<span class="text-gray-600 uppercase tracking-wide text-[10px]">${log.status}</span>`;
 
                 const row = document.createElement('tr');
-                row.className = "border-b border-gray-800 text-xs hover:bg-gray-900/60";
+                row.className = "border-b border-gray-900 text-gray-300";
                 row.innerHTML = `
-                    <td class="py-3 text-gray-500">${log.date}<br><span class="text-[9px] text-gray-600">ID:${log.id}</span></td>
-                    <td class="py-3 font-bold text-white uppercase">${log.type}<br><span class="text-[10px] text-gray-400 font-normal capitalize">Name: ${log.legalName || 'N/A'}</span></td>
-                    <td class="py-3 text-gray-300 font-medium">${log.method}<br><span class="text-[10px] text-gray-500 font-mono">Node: ${log.accountNumber || log.tid || 'N/A'}</span></td>
-                    <td class="py-3 text-yellow-500 font-bold font-mono">${formatValue(log.amount)}</td>
-                    <td class="py-3">${proofRender}</td>
-                    <td class="py-3 text-right">${actionControls}</td>
+                    <td class="py-2 text-gray-500">${log.id}</td>
+                    <td class="py-2 uppercase text-white font-bold">${log.type} (${log.env})</td>
+                    <td class="py-2 text-amber-400 font-bold">${log.amount}</td>
+                    <td class="py-2 text-right">${actionButtonRibbon}</td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        // Global Window Scope Admin Override Intercept Logic Execution Matrix
-        window.adminActionOverride = function(id, finalStatus) {
-            const targetIndex = fundingLedger.findIndex(x => x.id === id);
-            if(targetIndex === -1) return;
+        window.adminActionOverrideJudgement = function(targetLogIdString, finalSettledStatusKey) {
+            const index = globalCorporateFundingLedgerArray.findIndex(x => x.id === targetLogIdString);
+            if(index === -1) return;
 
-            const targetLog = fundingLedger[targetIndex];
-            targetLog.status = finalStatus;
+            const targetPayloadItemObject = globalCorporateFundingLedgerArray[index];
+            targetPayloadItemObject.status = finalSettledStatusKey;
 
-            // If action parameter equals deposit approval, credit capital reserves directly
-            if(targetLog.type === 'deposit' && finalStatus === 'Approved') {
-                walletBalance += targetLog.amount;
+            if(targetPayloadItemObject.type === 'deposit' && finalSettledStatusKey === 'Approved') {
+                if(targetPayloadItemObject.env === 'DEMO') demoAccountCapitalBalanceSum += targetPayloadItemObject.amount;
+                else if(targetPayloadItemObject.env === 'USDT') usdtAccountCapitalBalanceSum += targetPayloadItemObject.amount;
+                else pkrAccountCapitalBalanceSum += targetPayloadItemObject.amount;
             }
-            // If action parameter equals withdrawal rejection, re-credit user capital margin reserves
-            if(targetLog.type === 'withdraw' && finalStatus === 'Rejected') {
-                walletBalance += targetLog.amount;
+            if(targetPayloadItemObject.type === 'withdraw' && finalSettledStatusKey === 'Rejected') {
+                if(targetPayloadItemObject.env === 'DEMO') demoAccountCapitalBalanceSum += targetPayloadItemObject.amount;
+                else if(targetPayloadItemObject.env === 'USDT') usdtAccountCapitalBalanceSum += targetPayloadItemObject.amount;
+                else pkrAccountCapitalBalanceSum += targetPayloadItemObject.amount;
             }
 
-            localStorage.setItem('t1_funding_ledger', JSON.stringify(fundingLedger));
-            localStorage.setItem('t1_wallet', walletBalance.toString());
-            
-            updateBalancesUI();
-            renderFundingLogs();
-            renderAdminManagementDashboard();
+            localStorage.setItem('ot_funding_ledger', JSON.stringify(globalCorporateFundingLedgerArray));
+            renderActiveInterfaceMainDisplayValues();
+            activateAdminInterfaceConsoleOverlayRows();
         };
 
-        // --- APEXCHARTS ENGINE VECTOR FLOW ---
-        function initializeChart() {
-            const options = {
-                chart: { type: 'line', height: 220, toolbar: { show: false }, animations: { enabled: false }, background: 'transparent' },
-                series: [{ name: 'Price Feed Feed', data: [] }],
-                colors: ['#10b981'], stroke: { width: 3, curve: 'smooth' }, theme: { mode: 'dark' },
-                grid: { borderColor: '#1f2937', strokeDashArray: 3 },
-                xaxis: { labels: { show: false }, axisBorder: { show: false } },
-                yaxis: { labels: { style: { colors: '#9ca3af', fontFamily: 'monospace' } } }
-            };
-            chartInstance = new ApexCharts(document.getElementById("chartContainer"), options);
-            chartInstance.render();
-        }
-
-        function updateChartData() {
-            if(!chartInstance || !assetsDatabase[selectedAsset]) return;
-            chartInstance.updateSeries([{ data: assetsDatabase[selectedAsset].history }]);
-        }
-
-        // Binding Actions Event Callbacks
-        document.getElementById('buyBtn').addEventListener('click', () => executeTrade('BUY'));
-        document.getElementById('sellBtn').addEventListener('click', () => executeTrade('SELL'));
-    </script>
-
-    <!-- INTERACTIVE FUNDING CONTROLS AND BASE64 CORE RECEPTACLE LOGIC FUNCTIONS -->
-    <script>
-        const EXCHANGE_CONSTANT_VAL = 278.00;
-        let currentModalViewMode = '';
-        let base64ImageStringPayload = '';
-
-        // Realtime Local Currency Live Label Cost Listeners
-        document.getElementById('depAmount').addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value) || 0;
-            document.getElementById('depPkrCalc').innerText = `Est: Rs ${(val * EXCHANGE_CONSTANT_VAL).toLocaleString(undefined, {minimumFractionDigits:2})} PKR`;
-        });
-        document.getElementById('wdAmount').addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value) || 0;
-            document.getElementById('wdPkrCalc').innerText = `Est Receive: Rs ${(val * EXCHANGE_CONSTANT_VAL).toLocaleString(undefined, {minimumFractionDigits:2})} PKR`;
-        });
-
-        // Image Base64 Stream Interceptor Pipeline Loader
-        document.getElementById('depFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onloadend = function() { base64ImageStringPayload = reader.result; };
-            reader.readAsDataURL(file);
-        });
-
-        function toggleFundingModal(mode = '') {
-            const modal = document.getElementById('fundingModal');
-            const depFields = document.getElementById('depositFormFields');
-            const wdFields = document.getElementById('withdrawFormFields');
-            const receiptView = document.getElementById('receiptRenderBlock');
-
-            if(!mode) { modal.classList.add('hidden'); return; }
-
-            currentModalViewMode = mode;
-            modal.classList.remove('hidden');
-            receiptView.classList.add('hidden');
-
-            if(mode === 'deposit') {
-                document.getElementById('fundingModalTitle').innerText = 'Institutional Capital Deposit Node';
-                depFields.classList.remove('hidden'); wdFields.classList.add('hidden');
-            } else if (mode === 'withdraw') {
-                document.getElementById('fundingModalTitle').innerText = 'Asset Dispersal Cashout Gateway';
-                wdFields.classList.remove('hidden'); depFields.classList.add('hidden');
-            }
-        }
-
-        function processSubmitDeposit() {
-            const amount = parseFloat(document.getElementById('depAmount').value) || 0;
-            const method = document.getElementById('depMethod').value;
-            const legalName = document.getElementById('depLegalName').value.trim();
-            const tid = document.getElementById('depTid').value.trim();
-
-            if(amount < 1) return alert("Minimum required investment threshold equals $1 USD.");
-            if(!legalName || !tid || !base64ImageStringPayload) return alert("Please fill all identity criteria data points and embed verification receipt file.");
-
-            const itemPayload = {
-                id: 'DEP-' + Date.now(),
-                type: 'deposit',
-                date: new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString(),
-                amount: amount, method: method, legalName: legalName, tid: tid, proof: base64ImageStringPayload, status: 'Pending'
-            };
-
-            saveFundingObjectToLocalStorage(itemPayload);
-            triggerDigitalReceiptView(itemPayload);
-        }
-
-        function processSubmitWithdrawal() {
-            const amount = parseFloat(document.getElementById('wdAmount').value) || 0;
-            const method = document.getElementById('wdMethod').value;
-            const legalName = document.getElementById('wdLegal').value.trim();
-            const accNum = document.getElementById('wdNumber').value.trim();
-            const username = document.getElementById('wdUser').value.trim();
-
-            if(amount < 2) return alert("Minimum compliance withdrawal dispersal parameters require $2 USD threshold.");
-            if(!legalName || !accNum || !username) return alert("Please map destination routing account parameters precisely.");
-
-            // Validation step against current client cash capital reserves balances
-            let walletBalance = parseFloat(localStorage.getItem('t1_wallet') || '10000.00');
-            if(amount > walletBalance) return alert("Requested volume matrix breaches current available capital lines.");
-
-            // Instant deduction to hold margin capital allocations securely
-            walletBalance -= amount;
-            localStorage.setItem('t1_wallet', walletBalance.toString());
-
-            const itemPayload = {
-                id: 'WTH-' + Date.now(),
-                type: 'withdraw',
-                date: new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString(),
-                amount: amount, method: method, legalName: legalName, accountNumber: accNum, username: username, status: 'Pending'
-            };
-
-            saveFundingObjectToLocalStorage(itemPayload);
-            triggerDigitalReceiptView(itemPayload);
-
-            // Dispatch global event execution pipeline notify trigger loop hook
-            const event = new Event('storage'); window.dispatchEvent(event);
-        }
-
-        function saveFundingObjectToLocalStorage(obj) {
-            let currentList = JSON.parse(localStorage.getItem('t1_funding_ledger') || '[]');
-            currentList.unshift(obj);
-            localStorage.setItem('t1_funding_ledger', JSON.stringify(currentList));
-            base64ImageStringPayload = ''; document.getElementById('depFile').value = '';
-        }
-
-        function triggerDigitalReceiptView(obj) {
-            document.getElementById('depositFormFields').classNames = 'hidden';
-            document.getElementById('depositFormFields').classList.add('hidden');
-            document.getElementById('withdrawFormFields').classList.add('hidden');
-            
-            const block = document.getElementById('receiptRenderBlock');
-            block.classList.remove('hidden');
-
-            document.getElementById('recType').innerText = obj.type.toUpperCase();
-            document.getElementById('recLegal').innerText = obj.legalName;
-            document.getElementById('recMethod').innerText = obj.method;
-            document.getElementById('recTarget').innerText = obj.accountNumber || obj.tid;
-            document.getElementById('recVal').innerText = `$${obj.amount.toFixed(2)} USD (Rs ${(obj.amount * EXCHANGE_CONSTANT_VAL).toLocaleString()} PKR)`;
-        }
+        window.deactivateAdminInterfaceConsole = function() { document.getElementById('backOfficeAdminConsolePanel').classList.add('hidden'); };
     </script>
 </body>
 </html>
