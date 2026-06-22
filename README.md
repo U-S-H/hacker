@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vestify Pro - Premium Trading Engine</title>
+    <title>Vestify Pro - Live Trading Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -82,28 +82,35 @@
         </nav>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Live Prices Ticker -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div class="bg-cardBg border border-gray-800 p-4 rounded-xl flex justify-between items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 font-semibold uppercase">Bitcoin (BTC/USD)</p>
-                        <p id="btcPrice" class="text-2xl font-mono font-bold text-accentGreen mt-1">$65,000.00</p>
-                    </div>
-                    <span id="btcBadge" class="text-xs font-bold text-accentGreen bg-emerald-500/10 px-2 py-1 rounded">Stable</span>
+            
+            <!-- Quick Stats / Wallet Header -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-cardBg border border-gray-800 p-6 rounded-2xl shadow-xl border-l-4 border-accentGreen">
+                    <p class="text-sm font-medium text-gray-400">Available Wallet Balance</p>
+                    <p id="walletBalanceDisplay" class="text-3xl font-mono font-bold text-white mt-2">$10,000.00</p>
+                    <button id="resetBalanceBtn" class="text-xs text-accentGreen hover:underline mt-2 inline-block">Reset Demo Cash ($10k)</button>
                 </div>
-                <div class="bg-cardBg border border-gray-800 p-4 rounded-xl flex justify-between items-center">
-                    <div>
-                        <p class="text-xs text-gray-400 font-semibold uppercase">Ethereum (ETH/USD)</p>
-                        <p id="ethPrice" class="text-2xl font-mono font-bold text-accentGreen mt-1">$3,400.00</p>
+                <div class="bg-cardBg border border-gray-800 p-6 rounded-2xl shadow-xl">
+                    <p class="text-sm font-medium text-gray-400">Total Account Value</p>
+                    <p id="totalAccountDisplay" class="text-3xl font-mono font-bold text-white mt-2">$10,000.00</p>
+                    <span class="text-xs text-gray-500">Wallet + Live Open PNL</span>
+                </div>
+                <div class="bg-cardBg border border-gray-800 p-6 rounded-2xl shadow-xl">
+                    <p class="text-sm font-medium text-gray-400">Bitcoin / USD</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <p id="btcPrice" class="text-2xl font-mono font-bold text-accentGreen">$65,000.00</p>
+                        <span id="btcBadge" class="text-xs font-bold text-accentGreen bg-emerald-500/10 px-2 py-0.5 rounded">▲ UP</span>
                     </div>
-                    <span id="ethBadge" class="text-xs font-bold text-accentGreen bg-emerald-500/10 px-2 py-1 rounded">Stable</span>
+                    <span class="text-xs text-gray-500">Ethereum (ETH): <span id="ethPrice" class="font-mono text-white">$3,400.00</span> <span id="ethBadge" class="text-accentGreen">▲</span></span>
                 </div>
             </div>
 
             <!-- Terminal Row -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="bg-cardBg border border-gray-800 p-6 rounded-2xl shadow-xl">
-                    <h2 class="text-lg font-semibold text-white mb-4">Place Trade</h2>
+                
+                <!-- Trade Execution Panel -->
+                <div class="bg-cardBg border border-gray-800 p-6 rounded-2xl shadow-xl h-fit">
+                    <h2 class="text-lg font-semibold text-white mb-4">Place Order</h2>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Select Asset</label>
@@ -115,15 +122,16 @@
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Amount (Tokens)</label>
                             <input type="number" id="tradeAmount" value="0.1" step="0.01" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-accentGreen">
+                            <p id="estimatedCost" class="text-xs text-gray-500 mt-1">Est. Cost: $6,500.00</p>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Take Profit ($)</label>
-                                <input type="number" id="tradeTP" placeholder="Target" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white text-sm font-mono focus:outline-none focus:border-accentGreen">
+                                <input type="number" id="tradeTP" placeholder="Target Price" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white text-sm font-mono focus:outline-none focus:border-accentGreen">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Stop Loss ($)</label>
-                                <input type="number" id="tradeSL" placeholder="Floor" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white text-sm font-mono focus:outline-none focus:border-accentRed">
+                                <input type="number" id="tradeSL" placeholder="Floor Price" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-white text-sm font-mono focus:outline-none focus:border-accentRed">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 pt-4">
@@ -133,7 +141,7 @@
                     </div>
                 </div>
 
-                <!-- Table Monitor -->
+                <!-- Table Monitor with Live PNL Tracking -->
                 <div class="bg-cardBg border border-gray-800 p-6 rounded-2xl shadow-xl lg:col-span-2">
                     <h2 class="text-lg font-semibold text-white mb-4">Active Open Positions</h2>
                     <div class="overflow-x-auto">
@@ -142,8 +150,8 @@
                                 <tr class="border-b border-gray-800 text-xs font-semibold uppercase text-gray-400">
                                     <th class="pb-3">Asset</th>
                                     <th class="pb-3">Type</th>
-                                    <th class="pb-3">Entry Price</th>
-                                    <th class="pb-3">Current Price</th>
+                                    <th class="pb-3">Entry / Current</th>
+                                    <th class="pb-3">Live P&L</th>
                                     <th class="pb-3">TP / SL</th>
                                     <th class="pb-3 text-right">Action</th>
                                 </tr>
@@ -158,18 +166,10 @@
         </main>
     </div>
 
-    <!-- FIREBASE MODULE SDK SETUP -->
+    <!-- CORE PLATFORM ENGINE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signInWithPopup, 
-            GoogleAuthProvider, 
-            onAuthStateChanged, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCsgXPW-h2NzAHMrDBIL_HjlU8wSpcgzvI",
@@ -194,105 +194,115 @@
         const authToggleText = document.getElementById('authToggleText');
         const userEmailDisplay = document.getElementById('userEmailDisplay');
 
-        // Toggle Auth View UI State
+        // State Engine Data Memory
+        let walletBalance = 10000.00; 
+        let prices = { BTC: 65000.00, ETH: 3400.00 };
+        let positions = [];
+
+        // Auth Logic Controls
         authToggleBtn.addEventListener('click', () => {
             isSignUpMode = !isSignUpMode;
-            if (isSignUpMode) {
-                authTitle.innerText = "Create Your Account";
-                mainAuthBtn.innerText = "Register Account";
-                authToggleText.innerText = "Already have an account?";
-                authToggleBtn.innerText = "Login";
-            } else {
-                authTitle.innerText = "Login to your account";
-                mainAuthBtn.innerText = "Login";
-                authToggleText.innerText = "Don't have an account?";
-                authToggleBtn.innerText = "Sign Up";
-            }
+            authTitle.innerText = isSignUpMode ? "Create Your Account" : "Login to your account";
+            mainAuthBtn.innerText = isSignUpMode ? "Register Account" : "Login";
+            authToggleText.innerText = isSignUpMode ? "Already have an account?" : "Don't have an account?";
+            authToggleBtn.innerText = isSignUpMode ? "Login" : "Sign Up";
         });
 
-        // Email and Password Login/Register Execution Fix
         mainAuthBtn.addEventListener('click', async () => {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
-
-            if(!email || !password) {
-                alert("Please enter both email and password.");
-                return;
-            }
-
+            if(!email || !password) return alert("Please fill details.");
             try {
                 if (isSignUpMode) {
                     await createUserWithEmailAndPassword(auth, email, password);
-                    alert("Account registered successfully!");
+                    alert("Registered successfully!");
                 } else {
                     await signInWithEmailAndPassword(auth, email, password);
                 }
-            } catch (error) {
-                alert("Authentication Failed: " + error.message);
-            }
+            } catch (error) { alert(error.message); }
         });
 
-        // Google Auth Trigger Event Action
         document.getElementById('googleAuthBtn').addEventListener('click', async () => {
-            try {
-                await signInWithPopup(auth, googleProvider);
-            } catch (error) {
-                alert("Google Authentication Failed: " + error.message);
-            }
+            try { await signInWithPopup(auth, googleProvider); } catch (error) { alert(error.message); }
         });
 
-        // Logout Event Trigger
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Logout Error", error);
-            }
-        });
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-        // Watch Auth State Change globally
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 authScreen.classList.add('hidden');
                 dashboardScreen.classList.remove('hidden');
-                userEmailDisplay.innerText = user.email || user.displayName || "Investor";
+                userEmailDisplay.innerText = user.email || "Investor";
+                updateBalancesUI();
             } else {
                 authScreen.classList.remove('hidden');
                 dashboardScreen.classList.add('hidden');
             }
         });
 
-        // --- CORE SIMULATOR MECHANICS ENGINE ---
-        let prices = { BTC: 65000.00, ETH: 3400.00 };
-        let positions = [];
+        // Live Cost Estimate Updater
+        const updateEstimate = () => {
+            const asset = document.getElementById('tradeAsset').value;
+            const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
+            document.getElementById('estimatedCost').innerText = `Est. Value: $${(prices[asset] * amount).toFixed(2)}`;
+        };
+        document.getElementById('tradeAsset').addEventListener('change', updateEstimate);
+        document.getElementById('tradeAmount').addEventListener('input', updateEstimate);
 
+        // Reset Balance Button
+        document.getElementById('resetBalanceBtn').addEventListener('click', () => {
+            walletBalance = 10000.00;
+            updateBalancesUI();
+        });
+
+        // 2 Second Ticker Market Simulation Core Loop
         setInterval(() => {
             ['BTC', 'ETH'].forEach(asset => {
-                const changePercent = (Math.random() * 0.4 - 0.2) / 100;
+                const changePercent = (Math.random() * 0.6 - 0.3) / 100; // Volatility factor
                 const oldPrice = prices[asset];
                 prices[asset] = oldPrice * (1 + changePercent);
 
                 const el = document.getElementById(`${asset.toLowerCase()}Price`);
                 const badge = document.getElementById(`${asset.toLowerCase()}Badge`);
                 if(!el) return;
-                
-                el.innerText = `$${prices[asset].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
+                el.innerText = `$${prices[asset].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 if (prices[asset] > oldPrice) {
-                    el.className = "text-2xl font-mono font-bold text-accentGreen mt-1";
-                    badge.innerText = "▲ UP";
-                    badge.className = "text-xs font-bold text-accentGreen bg-emerald-500/10 px-2 py-1 rounded";
+                    el.className = "text-2xl font-mono font-bold text-accentGreen";
+                    if(badge) { badge.innerText = "▲ UP"; badge.className = "text-xs font-bold text-accentGreen bg-emerald-500/10 px-2 py-0.5 rounded"; }
                 } else {
-                    el.className = "text-2xl font-mono font-bold text-accentRed mt-1";
-                    badge.innerText = "▼ DOWN";
-                    badge.className = "text-xs font-bold text-accentRed bg-red-500/10 px-2 py-1 rounded";
+                    el.className = "text-2xl font-mono font-bold text-accentRed";
+                    if(badge) { badge.innerText = "▼ DOWN"; badge.className = "text-xs font-bold text-accentRed bg-red-500/10 px-2 py-0.5 rounded"; }
                 }
             });
 
+            updateEstimate();
             checkOrderTriggers();
             renderPositions();
+            updateBalancesUI();
         }, 2000);
 
+        // Core Calculation Function for Live PNL
+        function calculatePNL(pos) {
+            const currentPrice = prices[pos.asset];
+            let diff = currentPrice - pos.entryPrice;
+            if (pos.type === 'SELL') diff = pos.entryPrice - currentPrice; // Short invert
+            
+            const pnlAmount = diff * pos.amount;
+            const pnlPercent = (diff / pos.entryPrice) * 100;
+            return { amount: pnlAmount, percent: pnlPercent };
+        }
+
+        function updateBalancesUI() {
+            let totalOpenPNL = 0;
+            positions.forEach(pos => { totalOpenPNL += calculatePNL(pos).amount; });
+
+            document.getElementById('walletBalanceDisplay').innerText = `$${walletBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            const totalAccountVal = walletBalance + totalOpenPNL;
+            document.getElementById('totalAccountDisplay').innerText = `$${totalAccountVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Execute Order Logic (Validation + Capital Margin Reserve Check)
         function executeTrade(type) {
             const asset = document.getElementById('tradeAsset').value;
             const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
@@ -300,6 +310,14 @@
             const sl = parseFloat(document.getElementById('tradeSL').value) || null;
             
             if (amount <= 0) return alert("Please enter a valid amount!");
+            
+            const orderValue = prices[asset] * amount;
+            if (orderValue > walletBalance) {
+                return alert(`Insufficient Funds! Required: $${orderValue.toFixed(2)}, Available: $${walletBalance.toFixed(2)}`);
+            }
+
+            // Deduct funds from available capital to hold dynamic margin
+            walletBalance -= orderValue;
 
             positions.push({
                 id: Date.now(),
@@ -307,6 +325,7 @@
                 type: type,
                 entryPrice: prices[asset],
                 amount: amount,
+                orderValue: orderValue, // Saved configuration cost
                 tp: tp,
                 sl: sl
             });
@@ -314,10 +333,25 @@
             document.getElementById('tradeTP').value = '';
             document.getElementById('tradeSL').value = '';
             renderPositions();
+            updateBalancesUI();
+        }
+
+        // Close Position Settlement Action
+        function settleAndClose(id) {
+            const targetPos = positions.find(pos => pos.id === id);
+            if (!targetPos) return;
+
+            const finalPnl = calculatePNL(targetPos).amount;
+            // Return base allocation capital + added performance matrix profit/loss
+            walletBalance += (targetPos.orderValue + finalPnl);
+
+            positions = positions.filter(pos => pos.id !== id);
+            renderPositions();
+            updateBalancesUI();
         }
 
         function checkOrderTriggers() {
-            positions.forEach((pos, index) => {
+            positions.forEach((pos) => {
                 const currentPrice = prices[pos.asset];
                 let shouldClose = false;
 
@@ -329,10 +363,7 @@
                     if (pos.sl && currentPrice >= pos.sl) shouldClose = true;
                 }
 
-                if (shouldClose) {
-                    positions.splice(index, 1);
-                    alert(`Engine Trigger: Position closed for ${pos.asset}.`);
-                }
+                if (shouldClose) { settleAndClose(pos.id); }
             });
         }
 
@@ -347,29 +378,31 @@
             tbody.innerHTML = '';
             positions.forEach(pos => {
                 const currentPrice = prices[pos.asset];
-                const typeColor = pos.type === 'BUY' ? 'text-accentGreen bg-emerald-500/10' : 'text-accentRed bg-red-500/10';
+                const pnl = calculatePNL(pos);
                 
+                const typeColor = pos.type === 'BUY' ? 'text-accentGreen bg-emerald-500/10' : 'text-accentRed bg-red-500/10';
+                const pnlColor = pnl.amount >= 0 ? 'text-accentGreen' : 'text-accentRed';
+                const sign = pnl.amount >= 0 ? '+' : '';
+
                 const row = document.createElement('tr');
-                row.className = "hover:bg-gray-800/20 transition";
+                row.className = "hover:bg-gray-800/20 transition border-b border-gray-800/40 text-xs md:text-sm";
                 row.innerHTML = `
                     <td class="py-3 font-semibold text-white">${pos.asset} (${pos.amount})</td>
                     <td class="py-3"><span class="px-2 py-0.5 text-xs font-bold rounded ${typeColor}">${pos.type}</span></td>
-                    <td class="py-3 font-mono text-gray-400">$${pos.entryPrice.toFixed(2)}</td>
-                    <td class="py-3 font-mono text-white">$${currentPrice.toFixed(2)}</td>
+                    <td class="py-3 font-mono text-gray-400">$${pos.entryPrice.toFixed(2)}<br><span class="text-white">$${currentPrice.toFixed(2)}</span></td>
+                    <td class="py-3 font-mono font-bold ${pnlColor}">${sign}$${pnl.amount.toFixed(2)}<br><span class="text-xs font-medium">${sign}${pnl.percent.toFixed(2)}%</span></td>
                     <td class="py-3 font-mono text-xs text-gray-400">TP: ${pos.tp ? '$' + pos.tp : 'None'}<br>SL: ${pos.sl ? '$' + pos.sl : 'None'}</td>
                     <td class="py-3 text-right">
-                        <button data-id="${pos.id}" class="close-btn bg-gray-800 hover:bg-accentRed text-gray-300 hover:text-white px-3 py-1 rounded text-xs font-medium transition">Close</button>
+                        <button data-id="${pos.id}" class="close-btn bg-gray-800 hover:bg-accentRed text-gray-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium transition border border-gray-700">Close</button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
 
-            // Re-bind click event handlers for close buttons dynamically safely inside module scope
             document.querySelectorAll('.close-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = parseInt(e.target.getAttribute('data-id'));
-                    positions = positions.filter(pos => pos.id !== id);
-                    renderPositions();
+                    settleAndClose(id);
                 });
             });
         }
